@@ -1,0 +1,62 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-form.css">
+{% endblock %}
+
+{% block content %}
+    <a href="{{ path_for('overview') }}" class="btn btn-light btn-back">&larr; Retour</a>
+
+    <div class="container text-center">
+        {% if flash.error %}
+            <div class="alert alert-danger fixed-top" role="alert">
+                {{ flash.error | raw }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        <form action="{{ path_for('postRegister') }}" class="mt-5 form-sign" method="post">
+            <img src="{{ base_url() }}/assets/img/logo.png" alt="Valkiry Logo" class="mb-4 rounded" width="128"
+                 height="72">
+
+            <h1 class="h3 mb-3 font-weight-normal">S'inscrire</h1>
+
+            <div class="form-group">
+                <label for="AccountType" class="sr-only">Type de compte</label>
+                <select class="form-control" id="AccountType" name="accountType">
+                    {% if APP_MODE == 'development' %}<option value="-1">Administrateur</option>{% endif %}
+                    <option value="1">Responsable pédagogique<!--Chef d'entreprise--></option>
+                    <option value="0" selected>Etudiant<!--Employé--></option>
+                </select>
+            </div>
+
+            <label for="inputEmail" class="sr-only">Adresse e-mail</label>
+            <input type="email" class="form-control{{ flash.formErrors.inputEmail ? " is-invalid" : "" }}"
+                   name="inputEmail" id="inputEmail" placeholder="Adresse e-mail" value="{{ old.inputEmail }}" autofocus required>
+            {% if flash.formErrors.inputEmail %}
+                <div class="invalid-feedback">
+                    {% for error in flash.formErrors.inputEmail %}
+                        {{ error }}
+                        {% if flash.formErrors.inputEmail|length > 1 %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="inputPassword" class="sr-only">Mot de passe</label>
+            <input type="password" class="form-control{{ flash.formErrors.inputPassword ? " is-invalid" : "" }}"
+                   name="inputPassword" id="inputPassword" placeholder="Mot de passe" value="{{ old.inputPassword }}" required>
+            {% if flash.formErrors.inputPassword %}
+                <div class="invalid-feedback">
+                    {% for error in flash.formErrors.inputPassword %}
+                        {{ error }}
+                        {% if flash.formErrors.inputPassword|length > 1 %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Envoyer</button>
+        </form>
+    </div>
+{% endblock %}

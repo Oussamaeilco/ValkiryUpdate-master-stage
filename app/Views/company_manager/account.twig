@@ -1,0 +1,12 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-form.css">
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+  {% include('company_manager/partials/navbar.twig') %}
+
+  {% include('public/partials/account.twig')%}
+{% endblock %}

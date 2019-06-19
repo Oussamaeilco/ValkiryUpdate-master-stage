@@ -1,0 +1,257 @@
+{% extends '_layouts/main.twig' %}
+{% import 'macros/admin.twig' as admin %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+
+    {% if flash.success %}
+        <div class="alert alert-success fixed-top" role="alert">
+            {{ flash.success | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ path_for('admin') }}">Valkiry</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="#licenses" class="nav-link">Licences</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container pt-2">
+
+        <section id="licenses">
+            <h2 class="my-3">Licenses</h2>
+
+            <div class="card my-3">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link{% if (flash.licenseTab == 'add' or flash.licenseTab is empty)  %} active{% endif %} bg-primary text-white" id="add-tab" data-toggle="tab"
+                               href="#add-license" role="tab" aria-controls="add-license" aria-selected="true">Ajouter
+                                une license</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if (flash.licenseTab == 'active')  %} active{% endif %} bg-success text-white" id="active-tab" data-toggle="tab"
+                               href="#active-licenses" role="tab" aria-controls="active-licenses" aria-selected="false">Licenses
+                                actives</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if (flash.licenseTab == 'unstarted')  %} active{% endif %} bg-secondary text-white" id="unstarted-tab" data-toggle="tab"
+                               href="#unstarted-licenses" role="tab" aria-controls="unstarted-licenses"
+                               aria-selected="false">Licenses inactives</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if (flash.licenseTab == 'expired')  %} active{% endif %} bg-danger text-white" id="expired-tab" data-toggle="tab"
+                               href="#expired-licenses" role="tab" aria-controls="expired-licenses"
+                               aria-selected="false">Licenses éxpirées</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade{% if (flash.licenseTab == 'add' or flash.licenseTab is empty)  %} show active{% endif %}" id="add-license" role="tabpanel"
+                             aria-labelledby="add-tab">
+                            {# --- ADD ---- #}
+
+                            <form action="{{ path_for('adminAddLicense') }}" method="post" class="mb-0">
+                                <div class="form-group">
+                                    <label for="inputUserEmail" class="h5">
+                                        Adresse e-mail du décideur (facultatif)
+                                        <span class="badge badge-dark" data-toggle="tooltip" data-placement="right"
+                                              title="Si une adresse mail est attribuée à la license, celle-ci sera automatiquement liée au compte décideur, sinon le décideur devra entrer la license une fois son compte créé pour établir ce lien.">?</span>
+                                    </label>
+                                    <input type="email" class="form-control" id="inputUserEmail" name="inputUserEmail"
+                                           placeholder="Adresse e-mail">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputStartDate" class="h5">Début de validité</label>
+                                    <input type="date" class="form-control" id="inputStartDate" name="inputStartDate"
+                                           value="{{ "now"|date("Y-m-d") }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEndDate" class="h5">Fin de validité</label>
+                                    <input type="date" class="form-control" id="inputEndDate" name="inputEndDate"
+                                           value="{{ "now +1 month"|date("Y-m-d") }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputLicense" class="h5">License personnalisée</label>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="checkboxCustomLicense" name="customLicense"
+                                                   value="true">
+                                            Utiliser une license
+                                            personnalisée (au cas contraire, le license sera générée automatiquement de
+                                            manière
+                                            unique)
+                                        </label>
+                                    </div>
+                                    <input type="text" class="form-control disabled" id="inputLicense"
+                                           name="inputLicense"
+                                           placeholder="ex: BA0F-7DA2-AAAC-43E3-5A52" disabled>
+                                </div>
+
+                                <div class="text-right">
+                                    <button class="btn btn-success">Ajouter</button>
+                                </div>
+                            </form>
+
+                            {# --- END ADD --- #}
+                        </div>
+                        <div class="tab-pane fade{% if (flash.licenseTab == 'active')  %} show active{% endif %}" id="active-licenses" role="tabpanel" aria-labelledby="active-tab">
+                            {# --- ACTIVE --- #}
+
+                            {{ admin.license_table(licenses.active, 'active') }}
+
+                            {# --- END ACTIVE --- #}
+                        </div>
+                        <div class="tab-pane fade{% if (flash.licenseTab == 'unstarted')  %} show active{% endif %}" id="unstarted-licenses" role="tabpanel"
+                             aria-labelledby="unstarted-tab">
+                            {# --- UNSTARTED --- #}
+
+                            {{ admin.license_table(licenses.unstarted, 'unstarted') }}
+
+                            {# --- END UNSTARTED --- #}
+                        </div>
+                        <div class="tab-pane fade{% if (flash.licenseTab == 'expired')  %} show active{% endif %}" id="expired-licenses" role="tabpanel" aria-labelledby="expired-tab">
+                            {# --- EXPIRED --- #}
+
+                            {{ admin.license_table(licenses.expired, 'expired') }}
+
+                            {# --- END EXPIRED --- #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {# --- MODALS --- #}
+
+    {# --- LICENSE MODALS --- #}
+
+    <div class="modal fade" id="modalLicenseAbort">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer la license ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sur de vouloir supprimer la license ayant pour id: <span class="font-weight-bold" data-fill="target"></span> ?</p>
+                    <p>Cette action est <span class="font-weight-bold">irréversible</span> et supprimera complétement la license de la base de donnée</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ path_for('adminAbortLicense') }}" method="post">
+                        <input type="number" name="inputId" data-value="target" hidden="hidden">
+                        <input type="text" name="flashTab" data-value="tab" hidden="hidden">
+                        <button type="submit" class="btn btn-danger">Supprimer la license</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLicenseEdit">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier la license</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path_for('adminEditLicense') }}" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="inputEditId" class="h5">ID</label>
+                                    <input type="number" class="form-control disabled" id="inputEditId" name="inputEditId" data-value="id" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEditStartDate" class="h5">Début de validité</label>
+                                    <input type="date" class="form-control" id="inputEditStartDate" name="inputEditStartDate" data-value="startdate">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEditEndDate" class="h5">Fin de validité</label>
+                                    <input type="date" class="form-control" id="inputEditEndDate" name="inputEditEndDate" data-value="enddate">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mt-5">
+                                    <label for="inputEditUserEmail" class="h5">Adresse e-mail du décideur</label>
+                                    <input type="email" class="form-control" id="inputEditUserEmail" name="inputEditUserEmail" data-value="email" placeholder="(facultatif)">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEditLicense" class="h5">License</label>
+                                    <input type="text" class="form-control" id="inputEditLicense" name="inputEditLicense" data-value="license">
+
+                                    <div class="checkbox mt-3">
+                                        <label>
+                                            <input type="checkbox" id="checkboxEditRegenerate" name="checkboxEditRegenerate" value="true">
+                                            Regénérer une license automatique
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="text" name="flashTab" data-value="tab" hidden="hidden">
+                        <button type="submit" class="btn btn-primary">Appliquer les changements</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# --- END LICENSE MODALS --- #}
+
+    {# --- END MODALS --- #}
+{% endblock %}
+
+{% block js %}
+    <script src="{{ base_url() }}/assets/js/app/admin.license.add.js"></script>
+    <script src="{{ base_url() }}/assets/js/app/admin.license.edit.js"></script>
+    <script src="{{ base_url() }}/assets/js/app/admin.license.abort.js"></script>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% macro user_question(question, answers) %}
+    <div class="card my-3 border-warning">
+        <div class="card-header bg-warning text-white font-weight-bold"><i class="fas fa-star"></i> Votre question</div>
+        <div class="card-body">
+
+            <p class="text-center">Sujet : {{ question.subject }}</p>
+            <p>Question : {{ question.question }}</p>
+            <hr>
+            <p class="float-sm-left font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+            {% if answers[question.id] is not null %}
+                <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro voted_question(question, answers, voted) %}
+    <div class="card my-3 border-info">
+        <div class="card-header bg-info text-white font-weight-bold"><i class="fas fa-star"></i> Question votée</div>
+        <div class="card-body">
+
+            <p class="text-center">Sujet : {{ question.subject }}</p>
+            <p>Question : {{ question.question }}</p>
+            <hr>
+            <p class="float-sm-left font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+            {% if answers[question.id] is not null %}
+                <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+            {% else %}
+                <form action=" {{ path_for('unvoteQuestion') }}" method="post">
+                    <input type="text" name="inputQuestionId" value="{{ question.id }}" hidden="hidden">
+                    {% if question.id == voted[question.id]['id'] %}
+                      <button type="submit" class="btn btn-primary float-sm-right">Annuler le vote</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro upvoted_question(question, index, user_question_id, answers, voted, answers_period) %}
+    <div class="card my-3{% if question.id == user_question_id %} border-success{% endif %}">
+        <div class="card-header bg-success text-white font-weight-bold">{% if question.id == user_question_id %}<i class="fas fa-star"></i> {% endif %}Les plus votées: #{{ index }}</div>
+        <div class="card-body">
+
+            <p class="text-center">Sujet : {{ question.subject }}</p>
+            <p>Question : {{ question.question }}</p>
+            <hr>
+            <p class="float-sm-left font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+            {% if answers[question.id] is not null %}
+                <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+            {% else %}
+                {% if question.id != user_question_id and not answers_period  and voted|length < 3 and not question.id == voted[question.id]['id'] %}
+                    <form action=" {{ path_for('voteQuestion') }}" method="post">
+                        <input type="text" name="inputQuestionId" value="{{ question.id }}" hidden="hidden">
+                        {% if voted|length < 3 and not question.id == voted[question.id]['id']%}
+                          <button type="submit" class="btn btn-primary float-sm-right">Voter</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro random_question(question, index, answers, voted) %}
+    <div class="card my-3">
+        <div class="card-header bg-secondary text-white font-weight-bold">Questions aléatoire: #{{ index }}</div>
+        <div class="card-body">
+
+            <p class="text-center">Sujet : {{ question.subject }}</p>
+            <p>Question : {{ question.question }}</p>
+            <hr>
+            <p class="float-sm-left font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+
+            {% if answers[question.id] is not null %}
+                <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+            {% else %}
+              {% if question.id != user_question_id and not answers_period  and voted|length < 3 and not question.id == voted[question.id]['id'] %}
+                  <form action=" {{ path_for('voteQuestion') }}" method="post">
+                      <input type="text" name="inputQuestionId" value="{{ question.id }}" hidden="hidden">
+                      {% if voted|length < 3 and not question.id == voted[question.id]['id']%}
+                        <button type="submit" class="btn btn-primary float-sm-right">Voter</button>
+                      {% endif %}
+                  </form>
+              {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

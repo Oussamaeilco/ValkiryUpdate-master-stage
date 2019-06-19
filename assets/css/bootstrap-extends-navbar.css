@@ -1,0 +1,19 @@
+body {
+    margin-top: 56px;
+}
+
+.alert {
+    z-index: 1050;
+}
+
+.navbar-brand {
+  height: 36px;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu li a.mb-2:hover {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}

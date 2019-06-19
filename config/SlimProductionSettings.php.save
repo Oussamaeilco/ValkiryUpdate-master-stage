@@ -1,0 +1,11 @@
+<?php
+
+$settings = [
+    'cache' => true,
+    'debug' => true,
+    'determineRouteBeforeAppMiddleware' => true,
+    'displayErrorDetails' => true,
+    'mode' => 'development'
+];
+
+return $settings;

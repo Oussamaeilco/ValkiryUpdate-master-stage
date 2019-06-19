@@ -1,0 +1,40 @@
+{% macro license_table(licenses, tab) %}
+    {% if licenses is empty %}
+        <div class="text-center display-4 m-3">Aucune license</div>
+    {% else %}
+        <table class="table">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">License</th>
+                <th scope="col">Début de validité</th>
+                <th scope="col">Fin de validité</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for license in licenses %}
+                <tr>
+                    <th scope="row">{{ license.id }}</th>
+                    <td>{{ license.user_email | default('- Non assignée -') }}</td>
+                    <td>{{ license.license }}</td>
+                    <td>{{ license.start_date | date("d/m/Y") }}</td>
+                    <td>{{ license.end_date | date("d/m/Y") }}</td>
+                    <td class="mr-auto">
+                        <a href="#" title="Modifier" data-action="license-edit"
+                           data-id="{{ license.id }}"
+                           data-email="{{ license.user_email }}"
+                           data-license="{{ license.license }}"
+                           data-startdate="{{ license.start_date }}"
+                           data-enddate="{{ license.end_date }}"
+                           data-tab="{{ tab }}" class="text-primary mx-1"><i class="far fa-edit"></i></a>
+                        <a href="#" title="Supprimer" data-action="license-abort" data-target="{{ license.id }}"
+                           data-tab="{{ tab }}" class="text-danger mx-1"><i class="fas fa-ban"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endmacro %}

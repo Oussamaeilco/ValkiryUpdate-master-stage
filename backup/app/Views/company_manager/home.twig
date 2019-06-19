@@ -1,0 +1,114 @@
+{% extends '_layouts/main.twig' %}
+{% import 'macros/answer.twig' as answerMacro %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% if date(pool.period_end) < date() %}
+    {% set remaining = poolExpiration|time_diff|replace({'in': '', 'hour': 'heure', 'day': 'jour', 'months': 'mois', 'month': 'mois'}) %}
+    {% set navbar_right = '<span class="text-danger font-weight-bold">Temps restant pour répondre: ' ~ remaining ~ '</span>' %}
+{% else %}
+    {% set navbar_right = '<span class="text-secondary">Période de questions</span>' %}
+    {% set questions_period = true %}
+{% endif %}
+
+{% block content %}
+    {% if flash.success %}
+        <div class="alert alert-success fixed-top" role="alert">
+            {{ flash.success | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% include('company_manager/partials/navbar.twig') %}
+
+    <div class="container">
+        <h1 class="text-center">Questions : </h1>
+        <p>Période du {{ pool.period_start | date("d/m/Y") }} au {{ pool.period_end | date("d/m/Y") }} :</p>
+        <div class="container">
+            {% if questions is empty %}
+            <div class="jumbotron">
+                <h3 class="text-center">Pas de question à afficher</h3>
+            </div>
+            {% else %}
+                {% for question in questions %}
+                    <div class="jumbotron">
+                        <p class="text-center">Sujet : {{ question.subject }}</p>
+                        <p>Question : {{ question.question }}</p>
+                        <hr>
+                        <p class="font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+                        {% if answers[question.id] is empty %}
+                          <button type="button" class="btn btn-primary float-sm-right{% if questions_period %} disabled{% endif %}" data-toggle="modal"
+                                  data-target="#answeringModal" data-id="{{question.id}}">Répondre
+                          </button>
+                        {% else %}
+                          <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="answeringModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Répondre à la question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST" action="{{path_for("answerQuestion")}}">
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label for="responseTextArea" class="sr-only">Réponse</label>
+                            <textarea class="form-control" id="responseTextArea" rows="5" name="inputAnswerText"></textarea>
+                            <input type="text" name="inputQuestionId" value="" hidden="hidden">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Répondre</button>
+                </div>
+              </form>
+            </div>
+        </div>
+    </div>
+
+    {% for answer in answers %}
+        {{ answerMacro.answer_modal(answer) }}
+    {% endfor %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $('#answeringModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var modal = $(this);
+      modal.find('.modal-body input[name="inputQuestionId"]').attr("value", id);
+    });
+
+    $('[data-action=showAnswer]').click(function() {
+        var id = $(this).attr('data-target');
+        var modal = $('.answerModal#' + id);
+
+        modal.modal();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ path_for('home') }}">Valkiry - Chef d'entreprise</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container text-center">
+        <div class="display-4 p-5">Votre license n'est pas encore active.</div>
+        <div class="m-4">Votre license sera active à partir du <span class="font-weight-bold">{{ license.start_date | date('d/m/Y') }}</span></div>
+    </div>
+{% endblock %}

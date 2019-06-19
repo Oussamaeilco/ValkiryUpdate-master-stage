@@ -1,0 +1,46 @@
+{% macro answer_modal(answer) %}
+    <div class="modal fade answerModal" id="{{ answer.question_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Réponse</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ answer.answer }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-action="forwardAnswer" data-target="{{ answer.question_id }}">Transférer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro answer_modal_cm(answer) %}
+  <div class="modal fade answerModal" id="{{ answer.question_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+       aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Réponse</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  {{ answer.answer }}
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-action="modifyAnswer" data-target="{{ answer.question_id }}">Modifier</button>
+                  <button type="button" class="btn btn-success" data-action="forwardAnswer" data-target="{{ answer.question_id }}">Transférer</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endmacro %}

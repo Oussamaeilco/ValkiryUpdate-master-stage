@@ -1,0 +1,77 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+    {% if flash.success %}
+        <div class="alert alert-success fixed-top" role="alert">
+            {{ flash.success | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% include 'company_manager/partials/navbar.twig' %}
+
+    <div class="container pt-4">
+
+        <div class="card">
+            <div class="card-header bg-success text-white">Ajouter un étudiant<!--employé--></div>
+            <form action="{{ path_for('companyManagerAddEmployee') }}" method="post" class="card-body">
+                <div class="form-group">
+                    <label for="inputEmployeeEmail" class="h5">Adresse e-mail de l'étudiant<!--employé-->:</label>
+                    <input type="email" class="form-control" id="inputEmployeeEmail" name="inputEmployeeEmail"
+                           placeholder="Adresse e-mail" autofocus>
+                </div>
+
+                <div class="text-right">
+                    <button class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">E-mails des étudiants<!--employées--></div>
+            <div class="card-body">
+                {% if employees is empty %}
+                    <div class="text-center display-4 m-3">Aucun étudiant<!--employé--> enregistré</div>
+                {% else %}
+                    <table class="table">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="w-75">E-mail</th>
+                            <th scope="col" class="w-25 text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.email }}</td>
+                                <td class="text-center p-1">
+                                    <form action="{{ path_for('companyManagerRemoveEmployee') }}" method="post" class="mb-0">
+                                        <input type="number" id="inputEmployeeId" name="inputEmployeeId"
+                                               value="{{ employee.id }}" hidden>
+                                        <button type="submit" class="btn"><i class="fas fa-minus"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+    {% include('company_manager/partials/navbar.twig') %}
+
+    <div class="container pt-2">
+        <h2 class="my-4 text-center">License</h2>
+
+        <div class="card border-primary mb-3">
+            <div class="card-header bg-primary text-white">Information sur la license</div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tbody>
+                    <tr>
+                        <td class="h5">Adresse e-mail associé</td>
+                        <td>{{ license.user_email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="h5">Clé licence</td>
+                        <td>{{ license.license }}</td>
+                    </tr>
+                    <tr>
+                        <td class="h5">Début de validité</td>
+                        <td>{{ license.start_date | date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="h5">Fin de validité</td>
+                        <td>{{ license.end_date | date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="h5">Statut</td>
+                        <td class="font-weight-bold">
+                            {% if status == 'active' %}<span class="text-success">Active</span>{% endif %}
+                            {% if status == 'expired' %}<span class="text-danger">Expirée</span>{% endif %}
+                            {% if status == 'unstrated' %}<span class="text-secondary">Inactive</span>{% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

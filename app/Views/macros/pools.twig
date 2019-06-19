@@ -1,0 +1,29 @@
+{% macro poolsList(pools) %}
+  {% if pools is empty %}
+    <div class="text-center display-4 m-3">Aucune période de questions à afficher</div>
+  {% else %}
+    <table class="table">
+      <thead class="thead-light">
+      <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date de début</th>
+          <th scope="col">Date de fin</th>
+          <th scope="col">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for pool in pools %}
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ pool.period_start | date("d/m/Y") }}</td>
+            <td>{{ pool.period_end | date("d/m/Y") }}</td>
+            <td class="mr-auto">
+                <a href="/pool/{{ pool.id }}" class="btn btn-primary">Voir</a>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,53 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ path_for('home') }}">Valkiry - Responsable pédagogique<!--Chef d'entreprise--></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container text-center">
+        <form action="{{ path_for('companyManagerActivate') }}" class="pt-5" method="post">
+            {# TODO: Use real logo #}
+            <img src="https://dummyimage.com/72x72/000000/fff.png" alt="Valkiry Logo" class="mb-4 rounded" width="72"
+                 height="72">
+
+            <h1 class="h3 mb-4 font-weight-normal">Activation</h1>
+
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+                    <label for="inputLicense" class="h4">Veuillez entrer votre licence</label>
+                    <input type="text" class="form-control" id="inputLicense" name="inputLicense"
+                           placeholder="License d'activation" required autofocus>
+
+                    <button class="btn btn-success btn-block mt-4" type="submit">Activer</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

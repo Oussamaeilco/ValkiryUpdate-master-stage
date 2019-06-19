@@ -1,0 +1,41 @@
+<div class="container text-center">
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% if flash.success %}
+        <div class="alert alert-success fixed-top" role="alert">
+            {{ flash.success | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <form action="{{path_for('modifyAccount')}}" class="mt-5 form-sign" method="post">
+      <img src="{{ base_url() }}/assets/img/logo.png" alt="Valkiry Logo" class="mb-4" width="128"
+           height="72">
+
+        <h1 class="h3 mb-3 font-weight-normal">Mon profil</h1>
+        <div class="form-group">
+          <label for="inputEmail" class="sr-only">Adresse e-mail</label>
+          <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Adresse e-mail" value="{{ email }}"
+               autofocus>
+        </div>
+        <div class="form-group">
+          <label for="inputCurrentPassword" class="sr-only">Mot de passe actuel</label>
+          <input type="password" class="form-control" name="inputCurrentPassword" id="inputCurrentPassword"
+               placeholder="Mot de passe actuel">
+
+          <label for="inputNewPassword" class="sr-only">Nouveau mot de passe</label>
+          <input type="password" class="form-control" name="inputNewPassword" id="inputNewPassword"
+                    placeholder="Nouveau mot de passe">
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
+    </form>
+</div>

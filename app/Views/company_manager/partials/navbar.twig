@@ -1,0 +1,31 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path_for('home') }}"><img src="{{ base_url() }}/assets/img/logo.png" alt="Valkiry Logo" class="mb-4" width="64"
+             height="36"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a href="{{ path_for('home') }}" class="btn">Questions</a></li>
+                <li class="nav-item"><a href="{{ path_for('pools') }}" class="btn">Réponses</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+                        Mon compte<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu text-center">
+                        <li><a href="{{path_for('account')}}" class="btn mb-2">Mes informations</a></li>
+                        <li><a href="{{ path_for('license') }}" class="btn mb-2">Ma licence</a></li>
+                        <li><a href="{{ path_for('employees') }}" class="btn mb-2">Gestion des étudiants<!--employés--></a></li>
+                        <li><a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                {{ navbar_right | raw }}
+            </span>
+        </div>
+    </div>
+</nav>

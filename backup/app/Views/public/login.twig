@@ -1,0 +1,44 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-form.css">
+{% endblock %}
+
+{% block content %}
+    <a href="{{ path_for('overview') }}" class="btn btn-light btn-back">&larr; Retour</a>
+
+    <div class="container text-center">
+        {% if flash.error %}
+            <div class="alert alert-danger fixed-top" role="alert">
+                {{ flash.error | raw }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        <form action="{{ path_for('postLogin') }}" class="mt-5 form-sign" method="post">
+            {# TODO: Use real logo #}
+            <img src="https://dummyimage.com/72x72/000000/fff.png" alt="Valkiry Logo" class="mb-4 rounded" width="72"
+                 height="72">
+
+            <h1 class="h3 mb-3 font-weight-normal">Se connecter</h1>
+
+            <label for="inputEmail" class="sr-only">Adresse e-mail</label>
+            <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Adresse e-mail" value="{{ old.inputEmail }}"
+                   required autofocus>
+
+            <label for="inputPassword" class="sr-only">Mot de passe</label>
+            <input type="password" class="form-control" name="inputPassword" id="inputPassword" value="{{ old.inputPassword }}"
+                   placeholder="Mot de passe" required>
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="remember" value="true"> Rester connecté
+                </label>
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Envoyer</button>
+        </form>
+    </div>
+{% endblock %}

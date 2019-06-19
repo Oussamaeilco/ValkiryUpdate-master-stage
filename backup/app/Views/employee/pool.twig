@@ -1,0 +1,49 @@
+{% extends '_layouts/main.twig' %}
+{% import 'macros/answer.twig' as answerMacro %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+
+    {% include('employee/partials/navbar.twig') %}
+
+    <div class="container">
+        <p>Période du {{ pool.period_start | date("d/m/Y") }} au {{ pool.period_end | date("d/m/Y") }} :</p>
+        <div class="container">
+            {% if questions is empty %}
+            <div class="jumbotron">
+                <h3 class="text-center">Pas de question à afficher</h3>
+            </div>
+            {% else %}
+                {% for question in questions %}
+                    <div class="jumbotron">
+                        <p class="text-center">Sujet : {{ question.subject }}</p>
+                        <p>Question : {{ question.question }}</p>
+                        <hr>
+                        <p class="font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+                        {% if not answers[question.id] is empty %}
+                          <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    {% for answer in answers %}
+        {{ answerMacro.answer_modal(answer) }}
+    {% endfor %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $('[data-action=showAnswer]').click(function() {
+        var id = $(this).attr('data-target');
+        var modal = $('.answerModal#' + id);
+
+        modal.modal();
+    });
+</script>
+{% endblock %}

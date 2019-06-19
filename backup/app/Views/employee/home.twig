@@ -1,0 +1,110 @@
+{% extends '_layouts/main.twig' %}
+{% import 'macros/employee.twig' as employee %}
+{% import 'macros/answer.twig' as answerMacro %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% if date(pool.period_end) < date() %}
+    {% set navbar_right = '<span class="text-primary font-weight-bold">Période de réponse</span>' %}
+    {% set answers_period = true %}
+{% else %}
+    {% set remaining = pool.period_end|time_diff|replace({'in': '', 'hour': 'heure', 'day': 'jour', 'months': 'mois', 'month': 'mois'}) %}
+    {% set navbar_right = '<span class="text-info">Temps restant: ' ~ remaining ~ '</span>' %}
+{% endif %}
+
+{% block content %}
+
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {% include('employee/partials/navbar.twig') %}
+
+    <div class="container pt-3">
+        <h1 class="text-center">Votez pour ces questions : </h1>
+
+        <div class="container">
+            {% if questions is empty %}
+                <div class="jumbotron">
+                    <h3 class="text-center">Pas de question à afficher</h3>
+                </div>
+            {% else %}
+                {% if(questions['user'] is not empty) %}
+                    {{ employee.user_question(questions['user'][0], answers) }}
+                {% endif %}
+
+                {% if questions['voted'] is not empty %}
+                    {{ employee.voted_question(questions['voted'] | first, answers) }}
+                {% endif %}
+
+                {% for question in questions['upvoted'] %}
+                    {{ employee.upvoted_question(question, loop.index, questions['user'][0]['id'], answers, questions['voted'], answers_period) }}
+                {% endfor %}
+
+                {% if not answers_period %}
+                    {% for question in questions['random'] %}
+                        {{ employee.random_question(question, loop.index, answers, questions['voted']) }}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="text-center mb-5">
+            <button type="button" class="btn btn-lg btn-success{% if not questions['canAsk'] %} disabled{% endif %}" data-toggle="modal" data-target="#questioningModal">
+                Proposer une question
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="questioningModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Poser une question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST" action="{{path_for('addQuestion')}}">
+                    <div class="modal-body">
+                        <label for="inputSubject" class="sr-only">Sujet</label>
+                        <input type="text" class="form-control" name="inputSubject" id="inputSubject"
+                               placeholder="Sujet" required>
+                        <hr>
+                        <label for="inputBody" class="sr-only">Question</label>
+                        <textarea class="form-control" id="inputBody" name="inputBody" rows="5" placeholder="Question"
+                                  required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Poser la question</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% for answer in answers %}
+        {{ answerMacro.answer_modal(answer) }}
+    {% endfor %}
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('[data-action=showAnswer]').click(function() {
+            var id = $(this).attr('data-target');
+            var modal = $('.answerModal#' + id);
+
+            modal.modal();
+        });
+    </script>
+{% endblock %}

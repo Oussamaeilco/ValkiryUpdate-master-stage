@@ -1,0 +1,119 @@
+{% extends '_layouts/main.twig' %}
+{% import 'macros/answer.twig' as answerMacro %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+
+    {% include('company_manager/partials/navbar.twig') %}
+
+    <div class="container">
+        <p>Période du {{ pool.period_start | date("d/m/Y") }} au {{ pool.period_end | date("d/m/Y") }} :</p>
+        <div class="container">
+            {% if questions is empty %}
+            <div class="jumbotron">
+                <h3 class="text-center">Pas de question à afficher</h3>
+            </div>
+            {% else %}
+                {% for question in questions %}
+                    <div class="jumbotron">
+                        <p class="text-center">Sujet : {{ question.subject }}</p>
+                        <p>Question : {{ question.question }}</p>
+                        <hr>
+                        <p class="font-weight-bold">Nombre de votes : {{ question.votes }}</p>
+                        {% if not answers[question.id] is empty %}
+                          <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    {% for answer in answers %}
+        {{ answerMacro.answer_modal_cm(answer) }}
+    {% endfor %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    (function(){
+      var modalBodyContent;
+
+      $('[data-action=showAnswer]').click(function() {
+          var id = $(this).attr('data-target');
+          var modal = $('.answerModal#' + id);
+
+          modal.modal();
+      });
+
+      var eventModify = function(){
+          var questionId = $(this).attr('data-target');
+          var modal = $('.answerModal#' + questionId);
+          var modalContent = modal.find(".modal-content");
+          modalBodyContent = modal.find(".modal-body").text().trim();
+          modalContent.html("<div class=\"modal-header\">\
+              <h5 class=\"modal-title\" id=\"exampleModalLongTitle\">Répondre à la question</h5>\
+              <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\
+                  <span aria-hidden=\"true\">&times;</span>\
+              </button>\
+          </div>\
+          <form method=\"POST\" action=\"{{path_for('modifyAnswer')}}\">\
+          <div class=\"modal-body\">\
+                  <div class=\"form-group\">\
+                      <label for=\"responseTextArea\" class=\"sr-only\">Réponse</label>\
+                      <textarea class=\"form-control\" id=\"responseTextArea\" rows=\"5\" name=\"inputAnswerText\">" + modalBodyContent + "</textarea>\
+                      <input type=\"text\" name=\"inputQuestionId\" value=\"\" hidden=\"hidden\">\
+                  </div>\
+          </div>\
+          <div class=\"modal-footer\">\
+              <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Fermer</button>\
+              <button type=\"button\" class=\"btn btn-danger\" data-action=\"cancelModify\">Annuler</button>\
+              <button id=\"answerButton\" type=\"submit\" class=\"btn btn-primary\">Modifier</button>\
+          </div>\
+        </form>");
+        modal.find('.modal-body input[name="inputQuestionId"]').attr("value", questionId);
+        $('[data-action=cancelModify]').click(function(){
+          var questionId = $(this).attr('data-target');
+          var modal = $('.answerModal#' + questionId);
+          var form = modal.find("form");
+          var cnt = form.contents();
+          form.replaceWith(cnt);
+          var modalBody = modal.find(".modal-body");
+          modalBody.html(modalBodyContent);
+          var buttonCancel = modal.find('.btn-danger');
+          $("#answerButton").remove();
+          modal.find(".modal-footer").prepend($("<button type=\"button\" class=\"btn btn-primary\" data-action=\"modifyAnswer\" data-target=" + questionId + ">Modifier</button>"));
+          var buttonForward = $("<button type=\"button\" class=\"btn btn-success\" data-action=\"forwardAnswer\" data-target=" + questionId + ">Transférer</button>");
+          modal.find(".modal-footer").prepend(buttonForward);
+          buttonForward.click(eventForward);
+          $('[data-action=modifyAnswer]').click(eventModify);
+          buttonCancel.remove();
+        });
+        var buttonCancel = modal.find('.btn-danger');
+        buttonCancel.attr('data-target', questionId);
+      }
+
+      $('[data-action=modifyAnswer]').click(eventModify);
+
+      var eventForward = function(){
+        var questionId = $(this).attr('data-target');
+        var modal = $('.answerModal#' + questionId);
+        modal.find(".modal-footer").prepend($("<form id=\"mailForm\" action=\"\"><input type=\"email\" name=\"\" class=\"form-control mb-3\"><button type=\"submit\" class=\"btn btn-info\">Transférer à ce mail</button></form>"));
+        $(this).remove();
+        $("#mailForm").submit(function(event){
+          event.preventDefault();
+          var modal = $('.answerModal#' + questionId);
+          modalBodyContent = modal.find(".modal-body").text().trim();
+          var link = $("<a href=\"mailto:" + $("input[type=email]").val() + "?subject=Réponse Valkiry&body=" + modalBodyContent + "\" class=\"btn btn-success\">Transférer à " + $("input[type=email]").val() + "</a>");
+          modal.find(".modal-footer").prepend(link);
+          $(this).remove();
+        });
+      }
+
+      $('[data-action=forwardAnswer]').click(eventForward);
+  })();
+</script>
+{% endblock %}
