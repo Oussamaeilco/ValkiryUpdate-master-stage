@@ -9,22 +9,22 @@
 
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav mr-auto">
+                {# 
                 <li class="nav-item"><a href="{{ path_for('home') }}" class="btn">Questions</a></li>
-                <li class="nav-item"><a href="{{ path_for('pools') }}" class="btn">Réponses</a></li>
+                <li class="nav-item"><a href="{{ path_for('employees') }}" class="btn">Gestion des étudiants<!--employés--></a></li>
+                #}
                 <li class="dropdown">
                     <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
                         Mon compte
                     </a>
                     <ul class="dropdown-menu text-center">
-                        <li><a href="{{path_for('account')}}" class="btn mb-2">Mes informations</a></li>
-                        <li><a href="{{ path_for('license') }}" class="btn mb-2">Ma licence</a></li>
-                        <li><a href="{{ path_for('employees') }}" class="btn mb-2">Gestion des étudiants<!--employés--></a></li>
+                        <li><a href="{{path_for('account')}}" class="btn btn-primary mb-2">Mes informations</a></li>
+                        <li><a href="{{ path_for('license') }}" class="btn btn-primary mb-2">Ma licence</a></li> 
                         <li><a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a></li>
                     </ul>
                 </li>
             </ul>
             <span class="navbar-text">
-                {{ navbar_right | raw }}
             </span>
         </div>
     </div>

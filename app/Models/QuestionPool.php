@@ -155,7 +155,7 @@ class QuestionPool extends Model
         return new QuestionCollection($this->container, $conditions);
     }
 
-    public function getExpiration($timeout = 4)
+    public function getExpiration($timeout = 8)
     {
         $period_end = strtotime($this->period_end);
         $expired = strtotime("+ {$timeout} days", $period_end);

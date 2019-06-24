@@ -9,6 +9,8 @@ use App\Models\LicenseCollection;
 use App\Models\QuestionCollection;
 use App\Models\QuestionPool;
 use App\Models\QuestionPoolCollection;
+use App\Models\Promotion;
+use App\Models\PromotionCollection;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -89,7 +91,10 @@ class GetController extends Controller
           $response,
           'company_manager/pools.twig',
           [
-            'pools' => $pools->toArray()
+            'pools' => $pools->toArray(),
+            'post' =>$_POST,
+            'get' =>$_GET,
+            'session' =>$_SESSION
           ]
       );
     }
@@ -102,7 +107,10 @@ class GetController extends Controller
           $response,
           'employee/pools.twig',
           [
-            'pools' => $pools->toArray()
+            'pools' => $pools->toArray(),
+            'post' =>$_POST,
+            'get' =>$_GET,
+            'session' =>$_SESSION
           ]
       );
     }
@@ -134,7 +142,8 @@ class GetController extends Controller
           [
             'pool' => $pool->toArray(),
             'questions' => $questions->toArray(),
-            'answers' => $questions->getAnswers()->indexize()
+            'answers' => $questions->getAnswers()->indexize(),
+            'session' =>$_SESSION
           ]
       );
     }
@@ -156,7 +165,8 @@ class GetController extends Controller
           [
             'pool' => $pool->toArray(),
             'questions' => $questions->toArray(),
-            'answers' => $questions->getAnswers()->indexize()
+            'answers' => $questions->getAnswers()->indexize(),
+            'session' =>$_SESSION
           ]
       );
     }
@@ -187,6 +197,7 @@ class GetController extends Controller
         $user = $this->container->user;
         $license = new License($this->container, ['user_email' => $user->email]);
         $pool = new QuestionPool($this->container, ['owner_id' => $user->id]);
+        $promotions=new PromotionCollection($this->container,['owner_id' => $user->id]);
 
         switch ($license->getStatus()) {
             case License::$STATUS_EMPTY:
@@ -210,7 +221,11 @@ class GetController extends Controller
                 'pool' => $pool->toArray(),
                 'poolExpiration' => $pool->getExpiration(),
                 'questions' => $questions->toArray(),
-                'answers' => $questions->getAnswers()->indexize()
+                'answers' => $questions->getAnswers()->indexize(),
+                'promotions' =>$promotions->toArray(),
+                'post' =>$_POST,
+                'get' =>$_GET,
+                'session' =>$_SESSION
             ]
         );
     }
@@ -237,7 +252,10 @@ class GetController extends Controller
 
         $data = [
             'license' => $license->toArray(),
-            'status' => $license->getStatus()
+            'status' => $license->getStatus(),
+            'post' =>$_POST,
+            'get' =>$_GET,
+            'session' =>$_SESSION
         ];
 
         return $this->render($response, 'company_manager/license.twig', $data);
@@ -255,7 +273,10 @@ class GetController extends Controller
 
         return $this->render($response, 'company_manager/employees.twig', [
             'route' => 'employees',
-            'employees' => $employees->toArray()
+            'employees' => $employees->toArray(),
+            'post' =>$_POST,
+            'get' =>$_GET,
+            'session' =>$_SESSION
         ]);
     }
 
@@ -292,7 +313,10 @@ class GetController extends Controller
                 'voted' => $questions['voted']->indexize(),
                 'upvoted' => $questions['upvoted']->toArray(),
                 'random' => $questions['random']->toArray(),
-                'canAsk' => (!$pool->hasAsked($user->id) && $pool->isOpen())
+                'canAsk' => (!$pool->hasAsked($user->id) && $pool->isOpen()),
+                'post' =>$_POST,
+                'get' =>$_GET,
+                'session' =>$_SESSION
             ],
             'answers' => $answers->indexize()
         ]);

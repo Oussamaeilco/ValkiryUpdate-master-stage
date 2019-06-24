@@ -65,7 +65,8 @@ class PermissionMiddleware
             'account',
             'pools',
             'pool',
-            'modifyAnswer'
+            'modifyAnswer',
+            'addPromotion'
         ]
     ];
 

@@ -1,10 +1,8 @@
 {% extends '_layouts/main.twig' %}
-{% import 'macros/promotion.twig' as promotionMacro %}
 {% import 'macros/answer.twig' as answerMacro %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 {% endblock %}
 
 {% if date(pool.period_end) < date() %}
@@ -34,43 +32,9 @@
         </div>
     {% endif %}
 
-    {% if ( get["promotion_id"] or session["promotion_id"]) is defined %}
-        {{ app.session.set('promotion_id', get["promotion_id"]) }}
-        
-        {# partie lié à la promotion #}
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{{ path_for('home') }}"><img src="{{ base_url() }}/assets/img/logo.png" alt="Valkiry Logo" class="mb-4" width="64"
-                    height="36"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-                <div class="collapse navbar-collapse" id="navbar">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a href="{{ path_for('home') }}" class="btn">Questions</a></li>
-                        <li class="nav-item"><a href="{{ path_for('pools') }}" class="btn">Réponses</a></li>
-                        <li class="dropdown">
-                            <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
-                                Mon compte
-                            </a>
-                            <ul class="dropdown-menu text-center">
-                                <li><a href="{{path_for('account')}}" class="btn mb-2">Mes informations</a></li>
-                                <li><a href="{{ path_for('license') }}" class="btn mb-2">Ma licence</a></li>
-                                <li><a href="{{ path_for('employees') }}" class="btn mb-2">Gestion des étudiants<!--employés--></a></li>
-                                <li><a href="{{ path_for('disconnect') }}" class="btn btn-danger">Déconnexion</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <span class="navbar-text">
-                        {{ navbar_right | raw }}
-                    </span>
-                </div>
-            </div>
-        </nav>
+    {% include('company_manager/partials/navbar.twig') %}
 
-        <div class="container">
+    <div class="container">
         {% if date(pool.period_end) >= date() %}
             <p>Période du {{ pool.period_start | date("d/m/Y") }} au {{ pool.period_end | date("d/m/Y") }} :</p>
         {% else %}
@@ -101,56 +65,7 @@
         </div>
     </div>
 
-
-    {% else %}
-
-    {% include('company_manager/partials/navbar_V2.twig') %}
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <button class="btn btn-dblue btn-lg" role="button" data-toggle="modal" data-target="#exampleModal">
-                    <span class="glyphicon glyphicon-plus green"></span></br>Ajouter</br>une promotion</a>
-                </button>
-            </div>
-        </div>
-        </br>
-        <div class="row">
-            <div class="col-md-12">
-                {# Liste des promotions #}
-                {{promotionMacro.promoList(promotions)}}
-            </div>
-        </div> 
-    </div>
-
-    {% endif %}
-
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Nouvelle promotion</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="{{path_for("addPromotion")}}">
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Promotion:</label>
-                        <input type="text" id="promotion_name" name="promotion_name">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">Confirmer</button>
-                    </div>
-                </form>
-            </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="answeringModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -181,7 +96,6 @@
     {% for answer in answers %}
         {{ answerMacro.answer_modal_cm(answer) }}
     {% endfor %}
-
 {% endblock %}
 
 {% block js %}
@@ -269,7 +183,4 @@
       $('[data-action=forwardAnswer]').click(eventForward);
   })();
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
 {% endblock %}

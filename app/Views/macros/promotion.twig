@@ -1,0 +1,15 @@
+{% macro promoList(promotions) %}
+  {% if promotions is empty %}
+    <div class="text-center display-4 m-3">Aucune promotion</div>
+  {% else %}
+        {% for promotion in promotions %}
+          <form  method="GET" action="{{path_for('home')}}" style="display: inline;">
+            <input type="hidden" name="promotion_id" value="{{promotion.id}}"></input>
+            <button class="btn btn-dblue btn-lg" role="button" type="submit">
+                      <span class="glyphicon glyphicon-folder-open green"></span></br>{{promotion.description}}</br></a>
+            </button>
+          </form>
+        {% endfor %}
+    
+  {% endif %}
+{% endmacro %}

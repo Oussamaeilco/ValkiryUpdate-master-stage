@@ -4,22 +4,22 @@ namespace App\Models;
 
 use Slim\Container;
 
-class Answer extends Model
+class Promotion extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'answers';
+    protected $table = 'promotion';
 
     /** @var mixed */
     private $id;
     /** @var mixed */
-    private $question_id;
+    private $description;
     /** @var mixed */
-    private $answer;
+    private $owner_id;
 
     /**
-     * Answer constructor.
+     * Promotion constructor.
      * @param Container $container
      * @param array $array
      * @param bool $fetch
@@ -29,10 +29,10 @@ class Answer extends Model
         parent::__construct($container);
 
         if ($fetch) {
-            $question = $this->selectAll($array);
+            $promotion = $this->selectAll($array);
 
-            if (!empty($question)) {
-                $this->setAll($question[0]);
+            if (!empty($promotion)) {
+                $this->setAll($promotion[0]);
             }
         } else {
             $this->setAll($array);
@@ -40,18 +40,18 @@ class Answer extends Model
     }
 
     /**
-     * @param array $answer
+     * @param array $promotion
      */
-    private function setAll($answer = [])
+    private function setAll($promotion = [])
     {
-        if (isset($answer['id'])) {
-            $this->id = $answer['id'];
+        if (isset($promotion['id'])) {
+            $this->id = $promotion['id'];
         }
-        if (isset($answer['question_id'])) {
-            $this->question_id = $answer['question_id'];
+        if (isset($promotion['description'])) {
+            $this->description = $promotion['description'];
         }
-        if (isset($answer['answer'])) {
-            $this->answer = $answer['answer'];
+        if (isset($promotion['owner_id'])) {
+            $this->owner_id = $promotion['owner_id'];
         }
     }
 
@@ -63,12 +63,21 @@ class Answer extends Model
         return intval($this->id);
     }
 
+     /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+
     /**
      * @return int
      */
-    public function getQuestionId()
+    public function getOwnerId()
     {
-        return intval($this->question_id);
+        return intval($this->owner_id);
     }
 
     /**
@@ -91,21 +100,21 @@ class Answer extends Model
      * @param array $exists
      * @return bool
      */
-    public function add($exists = ['question_id'])
+    public function add($exists = ['description'])
     {
         if ($this->exists($exists)) {
             return false;
         }
 
-        if (isset($exists['question_id'])) {
-            return boolval($this->insert(array_replace(array_slice($this->toArray(), 1), ['question_id' => $exists['question_id']])));
+        if (isset($exists['description'])) {
+            return boolval($this->insert(array_replace(array_slice($this->toArray(), 1), ['description' => $exists['description']])));
         }
 
         return boolval($this->insert(array_slice($this->toArray(), 1)));
     }
 
-    public function modifyAnswer(){
-      return boolval($this->update(array_slice($this->toArray(), 2), ['question_id' => $this->question_id]));
+    public function modifyPromotion(){
+      return boolval($this->update(array_slice($this->toArray(), 2), ['id' => $this->id]));
     }
 
     /**
@@ -115,8 +124,8 @@ class Answer extends Model
     {
         return [
             'id' => $this->id,
-            'question_id' => $this->question_id,
-            'answer' => $this->answer
+            'description' => $this->description,
+            'owner_id' =>$this->owner_id
         ];
     }
 }

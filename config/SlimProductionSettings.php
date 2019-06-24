@@ -2,9 +2,9 @@
 
 $settings = [
     'cache' => false,
-    'debug' => false,
+    'debug' => true,
     'determineRouteBeforeAppMiddleware' => true,
-    'displayErrorDetails' => false,
+    'displayErrorDetails' => true,
     'mode' => 'production'
 ];
 
