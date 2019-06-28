@@ -10,7 +10,7 @@ use App\Middlewares\FlashMiddleware;
 use App\Middlewares\OldInputMiddleware;
 use App\Middlewares\PermissionMiddleware;
 use Respect\Validation\Validator as v;
-
+//session_start();
 // Assets fixing
 if (PHP_SAPI === 'cli-server' && $_SERVER['SCRIPT_FILENAME'] !== __FILE__) {
     return false;

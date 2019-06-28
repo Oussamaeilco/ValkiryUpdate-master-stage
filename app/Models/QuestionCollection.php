@@ -26,12 +26,20 @@ class QuestionCollection extends Model
 
         $questions = [];
 
+        if(isset($_GET['promotion_id'])){
+            $_SESSION['promotion_id']=$_GET['promotion_id'];
+        }
+
         if ($selector == 'all' || $selector == '*') {
             $questions = $this->selectAll();
         } elseif (is_string($selector) || is_numeric($selector)) {
             $questions = $this->selectAll(['pool_id' => $selector]);
-        } elseif (is_array($selector)) {
-            $questions = $this->selectAll($selector);
+        } elseif (is_array($selector) && isset($_SESSION['promotion_id'])) {
+            
+            $questions = $this->query("select questions.id,questions.employee_id,questions.subject,questions.question,questions.pool_id from questions,employees,users where employees.promotion_id=".$_SESSION['promotion_id']." and employees.email=users.email and questions.employee_id=users.id and questions.pool_id=" . intval($selector['pool_id']));
+        }
+        else if(is_array($selector)){
+            $question=$this->selectAll($selector);
         }
 
         foreach ($questions as $question) {

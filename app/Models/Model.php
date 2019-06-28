@@ -114,9 +114,9 @@ class Model
      */
     protected function query($statement)
     {
-        $request = $this->pdo->query($statement);
+        $request = $this->pdo->query($statement)->fetchAll();
 
-        return $request->fetchAll();
+        return $request;
     }
 
     /**

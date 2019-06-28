@@ -18,6 +18,8 @@ class Employee extends Model
     private $email;
     /** @var mixed */
     private $owner_id;
+    /** @var mixed */
+    private $promotion_id;
 
     /**
      * Employee constructor.
@@ -54,6 +56,9 @@ class Employee extends Model
         if (isset($employee['owner_id'])) {
             $this->owner_id = $employee['owner_id'];
         }
+        if (isset($employee['promotion_id'])) {
+            $this->promotion_id = $employee['promotion_id'];
+        }
     }
 
     /**
@@ -61,7 +66,7 @@ class Employee extends Model
      */
     public function add()
     {
-        if ($this->exists(['email', 'owner_id'])) {
+        if ($this->exists(['email', 'owner_id','promotion_id'])) {
             return false;
         }
         return boolval($this->insert(array_slice($this->toArray(), 1)));
@@ -99,7 +104,8 @@ class Employee extends Model
         return [
             'id' => $this->id,
             'email' => $this->email,
-            'owner_id' => $this->owner_id
+            'owner_id' => $this->owner_id,
+            'promotion_id' =>$this->promotion_id
         ];
     }
 }

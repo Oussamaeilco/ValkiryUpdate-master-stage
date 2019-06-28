@@ -45,7 +45,7 @@ class QuestionPool extends Model
      * @param string|null $mode
      * @param bool $autofill
      */
-    public function __construct(Container $container, $array, $mode = null, $autofill = true)
+    public function __construct(Container $container, $array, $mode = null, $autofill = true, $promotion_id = null)
     {
         parent::__construct($container);
 
@@ -62,7 +62,10 @@ class QuestionPool extends Model
                 $this->fetchCreate($array, $autofill);
         }
 
-        if (!is_null($this->id)) {
+        if (!is_null($this->id) && $promotion_id!=null) {
+            $this->collection = new QuestionCollection($container, ['pool_id' => $this->id, 'promotion_id' => $promotion_id]);
+        }
+        else if(!is_null($this->id)){
             $this->collection = new QuestionCollection($container, ['pool_id' => $this->id]);
         }
     }

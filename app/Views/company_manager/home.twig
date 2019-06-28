@@ -34,9 +34,7 @@
         </div>
     {% endif %}
 
-    {% if ( get["promotion_id"] or session["promotion_id"]) is defined %}
-        {{ app.session.set('promotion_id', get["promotion_id"]) }}
-        
+    {% if ( get["promotion_id"] ) is defined %}
         {# partie lié à la promotion #}
         <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -49,7 +47,7 @@
                 
                 <div class="collapse navbar-collapse" id="navbar">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a href="{{ path_for('home') }}" class="btn">Questions</a></li>
+                        <li class="nav-item"><a href="{{ path_for('home') }}?promotion_id={{ get["promotion_id"] }}" class="btn">Questions</a></li>
                         <li class="nav-item"><a href="{{ path_for('pools') }}" class="btn">Réponses</a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
@@ -99,8 +97,9 @@
                 {% endfor %}
             {% endif %}
         </div>
+       
     </div>
-
+        
 
     {% else %}
 

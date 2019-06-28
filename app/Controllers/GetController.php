@@ -94,7 +94,7 @@ class GetController extends Controller
             'pools' => $pools->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
           ]
       );
     }
@@ -143,7 +143,7 @@ class GetController extends Controller
             'pool' => $pool->toArray(),
             'questions' => $questions->toArray(),
             'answers' => $questions->getAnswers()->indexize(),
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
           ]
       );
     }
@@ -196,7 +196,7 @@ class GetController extends Controller
     {
         $user = $this->container->user;
         $license = new License($this->container, ['user_email' => $user->email]);
-        $pool = new QuestionPool($this->container, ['owner_id' => $user->id]);
+        $pool = new QuestionPool($this->container, ['owner_id' => $user->id],null,true,$_SESSION["promotion_id"]);
         $promotions=new PromotionCollection($this->container,['owner_id' => $user->id]);
 
         switch ($license->getStatus()) {
@@ -211,7 +211,10 @@ class GetController extends Controller
         }
 
         $questions = $pool->upvoted();
-
+        
+        if(isset($_GET['promotion_id'])){
+          $_SESSION['promotion_id']=$_GET['promotion_id'];
+        }
         return $this->render(
             $response,
             'company_manager/home.twig',
@@ -225,7 +228,7 @@ class GetController extends Controller
                 'promotions' =>$promotions->toArray(),
                 'post' =>$_POST,
                 'get' =>$_GET,
-                'session' =>$_SESSION
+                'session' =>$_SESSION['promotion_id']
             ]
         );
     }
@@ -255,7 +258,7 @@ class GetController extends Controller
             'status' => $license->getStatus(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
         ];
 
         return $this->render($response, 'company_manager/license.twig', $data);
@@ -269,14 +272,15 @@ class GetController extends Controller
     public function employees(Request $request, Response $response)
     {
         $user = $this->container->user;
-        $employees = new EmployeeCollection($this->container, $user->id);
+        //$employees = new EmployeeCollection($this->container, $user->id);
+        $employees = new EmployeeCollection($this->container, ['owner_id'=>$user->id,'promotion_id' => $_SESSION['promotion_id']]);
 
         return $this->render($response, 'company_manager/employees.twig', [
             'route' => 'employees',
             'employees' => $employees->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
         ]);
     }
 

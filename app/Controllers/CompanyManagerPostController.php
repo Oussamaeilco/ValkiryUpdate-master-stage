@@ -40,8 +40,8 @@ class CompanyManagerPostController extends Controller
     {
         $user = $this->container->user;
         $email = $request->getParam('inputEmployeeEmail');
-
-        $employee = new Employee($this->container, ['email' => $email, 'owner_id' => $user->id], false);
+        $promotion=$request->getParam('promotion_id');
+        $employee = new Employee($this->container, ['email' => $email, 'owner_id' => $user->id, 'promotion_id' =>$promotion ] , false);
 
         if (!$employee->add()) {
             self::flash("Impossible d'ajouter cette adresse e-mail à la liste des employés: {$email}", 'error');
@@ -126,30 +126,6 @@ class CompanyManagerPostController extends Controller
         if (!$promotion->modifyAnswer()) {
             self::flash('Impossible de modifier cette promotion.', 'error');
         }
-
-        return $this->redirect($response, 'home');
-    }
-
-    public function PromotionHome(Request $request, Response $response)
-    {
-        $user = $this->container->user;
-        $license = new License($this->container, ['user_email' => $user->email]);
-        $pool = new QuestionPool($this->container, ['owner_id' => $user->id]);
-        $promotions=new PromotionCollection($this->container,['owner_id' => $user->id]);
-
-        switch ($license->getStatus()) {
-            case License::$STATUS_EMPTY:
-                return $this->redirect($response, 'activate');
-                break;
-            case License::$STATUS_EXPIRED:
-                return $this->render($response, 'company_manager/expired.twig', $license->toArray());
-                break;
-            case License::$STATUS_UNSTARTED:
-                return $this->render($response, 'company_manager/unstarted.twig', $license->toArray());
-        }
-
-        $questions = $pool->upvoted();
-
 
         return $this->redirect($response, 'home');
     }
