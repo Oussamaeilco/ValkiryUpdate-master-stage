@@ -205,6 +205,39 @@ class QuestionPool extends Model
     }
 
     /**
+     * @param array $conditions
+     * @return bool
+     */
+    public function exists($conditions)
+    {
+        foreach ($conditions as $key => $condition) {
+            if (is_numeric($key) && isset($this->$condition)) {
+                unset($conditions[$key]);
+                $conditions[$condition] = $this->$condition;
+            }
+        }
+
+        return boolval($this->count($conditions));
+    }
+
+    public function idFor($conditions)
+    {
+        foreach ($conditions as $index => $condition) {
+            if (isset($this->$condition)) {
+                unset($conditions[$index]);
+                $conditions[$condition] = $this->$condition;
+            }
+        }
+
+        $pool = $this->select(['id'], $conditions, 1);
+
+        if (empty($license)) {
+            return null;
+        }
+
+        return $pool[0]['id'];
+    }
+    /**
      * @param int $limit
      * @return QuestionCollection
      */

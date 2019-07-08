@@ -86,7 +86,9 @@ class GetController extends Controller
     public function companyManagerPools(Request $request, Response $response){
       $user = $this->container->user;
       $pools = new QuestionPoolCollection($this->container, $user->id);
-
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
       $this->render(
           $response,
           'company_manager/pools.twig',
@@ -102,7 +104,9 @@ class GetController extends Controller
     public function employeePools(Request $request, Response $response){
       $user = $this->container->user;
       $pools = new QuestionPoolCollection($this->container, $user->getOwnerId());
-
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
       $this->render(
           $response,
           'employee/pools.twig',
@@ -110,7 +114,7 @@ class GetController extends Controller
             'pools' => $pools->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
           ]
       );
     }
@@ -133,7 +137,9 @@ class GetController extends Controller
       if($pool->isActive()){
         return $this->redirect($response, 'home');
       }
-
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
       $questions = $pool->upvoted();
 
       $this->render(
@@ -156,7 +162,9 @@ class GetController extends Controller
       if($pool->isActive()){
         return $this->redirect($response, 'home');
       }
-
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
       $questions = $pool->upvoted();
 
       $this->render(
@@ -166,7 +174,7 @@ class GetController extends Controller
             'pool' => $pool->toArray(),
             'questions' => $questions->toArray(),
             'answers' => $questions->getAnswers()->indexize(),
-            'session' =>$_SESSION
+            'session' =>$_SESSION['promotion_id']
           ]
       );
     }
@@ -320,7 +328,7 @@ class GetController extends Controller
                 'canAsk' => (!$pool->hasAsked($user->id) && $pool->isOpen()),
                 'post' =>$_POST,
                 'get' =>$_GET,
-                'session' =>$_SESSION
+                'session' =>$_SESSION['promotion_id']
             ],
             'answers' => $answers->indexize()
         ]);

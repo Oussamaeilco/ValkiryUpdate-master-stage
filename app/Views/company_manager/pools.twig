@@ -17,7 +17,56 @@
     {% endif %}
     {% include('company_manager/partials/navbar.twig') %}
 
+    <div class="card">
+            <div class="card-header bg-success text-white">Ajouter une période</div>
+            <form action=" {{path_for('addPeriode')}} " method="post" class="card-body">
+            <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="inputStartDate" class="h5">Début de la période Question</label>
+                                    <input type="date" class="form-control" id="inputStartDate" name="inputStartDate">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEndDate" class="h5">Fin de la période Question</label>
+                                    <input type="date" class="form-control" id="inputEndDate" name="inputEndDate" onchange="copyFunction()">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                           
+                                <div class="form-group">
+                                    <label for="inputStartDateR" class="h5">Début de la période Réponse</label>
+                                    <input type="date" class="form-control" id="inputStartDateR" name="inputStartDateR" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEndDateR" class="h5">Fin de de la période Réponse</label>
+                                    <input type="date" class="form-control" id="inputEndDateR" name="inputEndDateR">
+                                </div>
+                            </div>
+            </div>
+            <div class="text-right">
+                <button class="btn btn-success">Ajouter</button>
+            </div>
+            </form>
+     </div>
+
+
     {{ poolsMacro.poolsList(pools) }}
 
     
+{% endblock %}
+
+
+{% block js %}
+    <script src="{{ base_url() }}/assets/js/app/company.pool.edit.js"></script>
+    <script src="{{ base_url() }}/assets/js/app/company.pool.abort.js"></script>
+    <script>
+        function copyFunction() {
+        var end = document.getElementById("inputEndDate");
+        var beginR=document.getElementById("inputStartDateR");
+        beginR.value = end.value;
+        }
+    </script> 
+
 {% endblock %}

@@ -82,8 +82,8 @@ $app->post('/removeEmployee', CompanyManagerPostController::class . ':removeEmpl
 $app->post('/answerQuestion', CompanyManagerPostController::class . ':answerQuestion')->setName('answerQuestion');
 $app->post('/modifyAnswer', CompanyManagerPostController::class . ':modifyAnswer')->setName('modifyAnswer');
 $app->post('/addPromotion',CompanyManagerPostController::class . ':addPromotion')->setName('addPromotion');
-$app->post('/modifyPromotion',CompanyManagerPostController::class . ':modifyPromotion')->setName('modifyPromotion');
-
+$app->post('/addPeriode',CompanyManagerPostController::class . ':addPeriode')->setName('addPeriode');
+$app->post('/removePeriode',CompanyManagerPostController::class . ':removePeriode')->setName('removePeriode');
 //  admin:get
 $app->get('/admin', GetController::class . ':admin')->setName('admin');
 //  admin:post
