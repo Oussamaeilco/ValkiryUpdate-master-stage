@@ -25,7 +25,8 @@ class QuestionPool extends Model
     private $period_start;
     /** @var mixed */
     private $period_end;
-
+    /** @var mixed */
+    private $reponse;
     /**
      * @var QuestionCollection
      */
@@ -56,6 +57,9 @@ class QuestionPool extends Model
             case self::$CREATE:
                 $this->setAll($array, $autofill);
                 $this->add();
+                break;
+            case 'create_manual':
+                $this->setAll($array, $autofill);
                 break;
             case self::$FETCH_CREATE:
             default:
@@ -93,6 +97,12 @@ class QuestionPool extends Model
             $this->period_end = $pool['period_end'];
         } elseif ($autofill) {
             $this->period_end = date('Y-m-d', strtotime('+6 days'));
+        }
+
+        if(isset($pool['reponse'])){
+            $this->reponse=$pool['reponse'];
+        } elseif ($autofill) {
+            $this->reponse= date('Y-m-d', strtotime('+14 days'));
         }
     }
 
@@ -157,13 +167,21 @@ class QuestionPool extends Model
 
         return new QuestionCollection($this->container, $conditions);
     }
-
+    /*
     public function getExpiration($timeout = 8)
     {
         $period_end = strtotime($this->period_end);
         $expired = strtotime("+ {$timeout} days", $period_end);
 
         return date('Y-m-d', $expired);
+    }
+    */
+
+    public function getExpiration()
+    {
+        $rep = strtotime($this->reponse);
+        
+        return date('Y-m-d', $rep);
     }
 
     /**
@@ -382,7 +400,8 @@ class QuestionPool extends Model
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'period_start' => $this->period_start,
-            'period_end' => $this->period_end
+            'period_end' => $this->period_end,
+            'reponse' => $this->reponse
         ];
     }
 }

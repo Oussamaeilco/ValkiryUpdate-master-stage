@@ -197,18 +197,18 @@ class CompanyManagerPostController extends Controller
         $owner_id=$user->id;
         $period_end=strtotime($request->getParam('inputEndDate'));
         $reponse_date=strtotime($request->getParam('inputEndDateR'));
-        $rep=($period_end-$reponse_date)/86400;
 
         $array = [
             'owner_id' => $owner_id,
             'period_start' => $request->getParam('inputStartDate'),
-            'period_end' => $request->getParam('inputEndDate')
+            'period_end' => $request->getParam('inputEndDate'),
+            'reponse' => $request->getParam('inputEndDateR')
         ];
-        $pool=new QuestionPool($this->container,$array,"create",false);
-        $pool->getExpiration($rep);
-        //if (!$pool->add()) {
-          //  self::flash("Impossible d'ajouter période", 'error');
-        //}
+        $pool=new QuestionPool($this->container,$array,"create_manual",false);
+       
+        if (!$pool->add()) {
+            self::flash("Impossible d'ajouter cette période à la liste", 'error');
+        }
 
         return $this->redirect($response, 'pools');
     }

@@ -54,13 +54,87 @@
 
     {{ poolsMacro.poolsList(pools) }}
 
+<!-- Modal suppression periode -->
+    <div class="modal fade" id="modalPeriodeAbort">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer la période ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sur de vouloir supprimer la période ayant pour id: <span class="font-weight-bold" data-fill="target"></span> ?</p>
+                    <p>Cette action est <span class="font-weight-bold">irréversible</span> et supprimera complétement la période de la base de donnée</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ path_for('removePeriode') }}" method="post">
+                        <input type="number" name="inputId" data-value="target" hidden="hidden">
+                        <button type="submit" class="btn btn-danger">Supprimer la période</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal edition periode -->
+    <div class="modal fade" id="modalPeriodeEdit">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier la période</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" class="form-control" id="inputEditId" name="inputEditId" data-value="id" readonly>
+                                <div class="form-group">
+                                    <label for="inputEditStartDate" class="h5">Début de la période Question</label>
+                                    <input type="date" class="form-control" id="inputEditStartDate" name="inputEditStartDate" data-value="startdate">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEditEndDate" class="h5">Fin de la période Question</label>
+                                    <input type="date" class="form-control" id="inputEditEndDate" name="inputEditEndDate" data-value="enddate" onchange="copyFunction1()">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                           
+                                <div class="form-group">
+                                    <label for="inputEditStartDateR" class="h5">Début de la période Réponse</label>
+                                    <input type="date" class="form-control" id="inputEditStartDateR" name="inputEditStartDateR" data-value="startdateR" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEditEndDateR" class="h5">Fin de de la période Réponse</label>
+                                    <input type="date" class="form-control" id="inputEditEndDateR" name="inputEditEndDateR" data-value="enddateR">
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Appliquer les changements</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
     
 {% endblock %}
 
 
 {% block js %}
-    <script src="{{ base_url() }}/assets/js/app/company.pool.edit.js"></script>
-    <script src="{{ base_url() }}/assets/js/app/company.pool.abort.js"></script>
+    <!-- Fonction de copie -->
     <script>
         function copyFunction() {
         var end = document.getElementById("inputEndDate");
@@ -68,5 +142,49 @@
         beginR.value = end.value;
         }
     </script> 
+    <script>
+        function copyFunction1() {
+         var endEdit=document.getElementById("inputEditEndDate");
+         var beginREdit=document.getElementById("inputEditStartDateR");
+         beginREdit.value=endEdit.value;
+        }
+    </script>
+
+    <!-- Controle des modales -->
+
+    <script>
+        (function() {
+            $('a[data-action=periode-abort]').click(function() {
+            var id = $(this).attr('data-target');
+            var modal = $('#modalPeriodeAbort');
+
+            modal.find('[data-fill=target]').text(id);
+            modal.find('[data-value=target]').val(id);
+       
+            modal.modal();
+            });
+        })();
+    </script>
+    
+    <script>
+        (function() {
+         $('a[data-action=periode-edit]').click(function() {
+            var id = $(this).attr('data-id');
+            var startdate = $(this).attr('data-startdate');
+            var enddate = $(this).attr('data-enddate');
+            var startdateR = $(this).attr('data-startdateR');
+            var enddateR = $(this).attr('data-enddateR');
+            var modal = $('#modalPeriodeEdit');
+
+            modal.find('[data-value=id]').val(id);
+            modal.find('[data-value=startdate]').val(startdate);
+            modal.find('[data-value=enddate]').val(enddate);
+            modal.find('[data-value=startdateR]').val(startdateR);
+            modal.find('[data-value=enddateR]').val(enddateR);
+            
+            modal.modal();
+        });
+        })();
+    </script>
 
 {% endblock %}

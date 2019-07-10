@@ -20,14 +20,14 @@
             <td>{{ pool.period_start | date("d/m/Y") }}</td>
             <td>{{ pool.period_end | date("d/m/Y") }}</td>
             <td>{{ pool.period_end | date("d/m/Y") }}</td>
-            <td>{{ poolExpiration | date("d/m/Y") }}</td>
+            <td>{{ pool['reponse'] | date("d/m/Y") }}</td>
             <td class="mr-auto">
                         <a href="#" title="Modifier" data-action="periode-edit"
                            data-id="{{ pool.id }}"
                            data-startdate="{{ pool.period_start | date("d/m/Y")}}"
                            data-enddate="{{ pool.period_end | date("d/m/Y") }}"
                            data-startdateR="{{ pool.period_end | date("d/m/Y") }}"
-                           data-enddateR="{{ poolExpiration | date("d/m/Y") }}"
+                           data-enddateR="{{ pool['reponse'] | date("d/m/Y") }}"
                         >
                         <i class="far fa-edit"></i>
                         </a>
@@ -37,110 +37,6 @@
           </tr>
         {% endfor %}
       </tbody>
-    </table>
-
-    
-   
-
-    <!-- Modal suppression periode -->
-    <div class="modal fade" id="modalPeriodeAbort">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Supprimer la période ?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sur de vouloir supprimer la période ayant pour id: <span class="font-weight-bold" data-fill="target"></span> ?</p>
-                    <p>Cette action est <span class="font-weight-bold">irréversible</span> et supprimera complétement la période de la base de donnée</p>
-                </div>
-                <div class="modal-footer">
-                    <form action="" method="post">
-                        <input type="number" name="inputId" data-value="target" hidden="hidden">
-                        <button type="submit" class="btn btn-danger">Supprimer la période</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal edition periode -->
-    <div class="modal fade" id="modalPeriodeEdit">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Modifier la période</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="" method="post">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="hidden" class="form-control" id="inputEditId" name="inputEditId" data-value="id" readonly>
-                                <input type="hidden" class="form-control" id="inputEditPromotion_id" name="inputEditPromotion_id" data-value="promotion">
-                                <div class="form-group">
-                                    <label for="inputEditStartDate" class="h5">Début de la période Question</label>
-                                    <input type="date" class="form-control" id="inputEditStartDate" name="inputEditStartDate" data-value="startdate">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputEditEndDate" class="h5">Fin de la période Question</label>
-                                    <input type="date" class="form-control" id="inputEditEndDate" name="inputEditEndDate" data-value="enddate">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                           
-                                <div class="form-group">
-                                    <label for="inputEditStartDateR" class="h5">Début de la période Réponse</label>
-                                    <input type="date" class="form-control" id="inputEditStartDateR" name="inputEditStartDateR" data-value="startdateR">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputEditEndDateR" class="h5">Fin de de la période Réponse</label>
-                                    <input type="date" class="form-control" id="inputEditEndDateR" name="inputEditEndDateR" data-value="enddateR">
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Appliquer les changements</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-
-    <div class="modal fade" id="modalPeriodeAbort">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Supprimer la période ?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sur de vouloir supprimer la période ayant pour id: <span class="font-weight-bold" data-fill="target"></span> ?</p>
-                    <p>Cette action est <span class="font-weight-bold">irréversible</span> et supprimera complétement la période de la base de donnée</p>
-                </div>
-                <div class="modal-footer">
-                    <form action="" method="post">
-                        <input type="number" name="inputId" data-value="target" hidden="hidden">
-                        <button type="submit" class="btn btn-danger">Supprimer la période</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+    </table>    
   {% endif %}
 {% endmacro %}
