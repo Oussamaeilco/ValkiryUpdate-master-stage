@@ -227,4 +227,35 @@ class CompanyManagerPostController extends Controller
         return $this->redirect($response, 'pools');
     }
 
+    
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function editPeriode(Request $request, Response $response)
+    {
+        $id = $request->getParam('inputEditId');
+       
+      
+        $array = [
+            'id' => $id,
+            'period_start' => $request->getParam('inputEditStartDate'),
+            'period_end' => $request->getParam('inputEditEndDate'),
+            'reponse' => $request->getParam('inputEditEndDateR')
+        ];
+
+        $pool=new QuestionPool($this->container,$array,'create_manual',null);
+
+        //$pool->update($array,['id'=>$id]);
+        if ($pool->edit($array,['id'=>$id])) {
+            self::flash("Période correctement modifiée.".$pool->getValues(), 'success');
+        } else {
+            self::flash("Impossible de modifier la période.".$pool->getValues(), 'error');
+        }
+
+        return $this->redirect($response, 'pools');
+    }
+
+
 }

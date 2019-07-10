@@ -70,6 +70,10 @@ class QuestionPool extends Model
         }
     }
 
+    public function getValues(){
+        return "=>". $this->id . "=" . $this->period_start . "=" . $this->period_end . "=" . $this->reponse;
+    }
+
     /**
      * @param $pool
      * @param bool $autofill
@@ -165,6 +169,31 @@ class QuestionPool extends Model
 
         return date('Y-m-d', $expired);
     }
+<<<<<<< Updated upstream
+=======
+    */
+
+    /**
+     * @param array|null $array
+     * @param array|null $conditions
+     * @return bool
+     */
+    public function edit($array = null, $conditions = null)
+    {
+        if ($array) {
+            return $this->update($array, $conditions);
+        }
+
+        return boolval($this->update(array_slice($this->toArray(), 1), ['id' => $this->id]));
+    }
+
+    public function getExpiration()
+    {
+        $rep = strtotime($this->reponse);
+        
+        return date('Y-m-d', $rep);
+    }
+>>>>>>> Stashed changes
 
     /**
      * @param $id
