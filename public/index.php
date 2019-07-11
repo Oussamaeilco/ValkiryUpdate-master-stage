@@ -84,6 +84,7 @@ $app->post('/modifyAnswer', CompanyManagerPostController::class . ':modifyAnswer
 $app->post('/addPromotion',CompanyManagerPostController::class . ':addPromotion')->setName('addPromotion');
 $app->post('/addPeriode',CompanyManagerPostController::class . ':addPeriode')->setName('addPeriode');
 $app->post('/removePeriode',CompanyManagerPostController::class . ':removePeriode')->setName('removePeriode');
+$app->post('/editPeriode',CompanyManagerPostController::class . ':editPeriode')->setName('editPeriode');
 //  admin:get
 $app->get('/admin', GetController::class . ':admin')->setName('admin');
 //  admin:post

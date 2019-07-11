@@ -68,7 +68,8 @@ class PermissionMiddleware
             'modifyAnswer',
             'addPromotion',
             'addPeriode',
-            'removePeriode'
+            'removePeriode',
+            'editPeriode'
         ]
     ];
 

@@ -349,6 +349,23 @@ class QuestionPool extends Model
 
         return ($expired >= $today && $period_start <= $today);
     }
+    public function getValues(){
+        return "==>".$this->id ."=".$this->period_start."=".$this->period_end."=".$this->reponse;
+    }
+
+    /**
+     * @param array|null $array
+     * @param array|null $conditions
+     * @return bool
+     */
+    public function edit($array = null, $conditions = null)
+    {
+        if ($array) {
+            return $this->update($array, $conditions);
+        }
+
+        return boolval($this->update(array_slice($this->toArray(), 1), ['id' => $this->id]));
+    }
 
     /**
      * @return bool
