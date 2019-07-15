@@ -2,6 +2,27 @@
 
 {% block css %}
     <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+    <style>
+        #custom-button {
+        padding: 10px;
+        color: white;
+        background-color: #009578;
+        border: 1px solid #000;
+        border-radius: 5px;
+        cursor: pointer;
+        }
+
+        #custom-button:hover {
+        background-color: #00b28f;
+        }
+
+        #custom-text {
+        margin-left: 10px;
+        font-family: sans-serif;
+        color: #aaa;
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -26,7 +47,6 @@
     {% include 'company_manager/partials/navbar.twig' %}
 
     <div class="container pt-4">
-
         <div class="card">
             <div class="card-header bg-success text-white">Ajouter un étudiant<!--employé--></div>
             <form action="{{ path_for('companyManagerAddEmployee') }}" method="post" class="card-body">
@@ -42,7 +62,20 @@
                 </div>
             </form>
         </div>
-
+        <div class="card">
+             <div class="card-header bg-success text-white">Ajouter étudiants à partir d'un Excel<!--employés--></div>
+             <form action="{{ path_for('companyManagerAddEmployees') }}" method="post" enctype="multipart/form-data" class="card-body">
+                <div class="form-group">
+                     <input type="hidden" id="promotion_id" name="promotion_id" value='{{ session }}'>
+                    <input type="file" id="real-file" name="fichier_excel"   hidden="hidden" accept="application/vnd.ms-excel , application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                <button type="button" id="custom-button">Selectioner un fichier Excel</button>
+                <span id="custom-text">Aucun fichier ...</span>
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
         <div class="card mt-4">
             <div class="card-header bg-primary text-white">E-mails des étudiants<!--employées--></div>
             <div class="card-body">
@@ -75,4 +108,24 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block js %}
+    <script>
+        const realFileBtn = document.getElementById("real-file");
+        const customBtn = document.getElementById("custom-button");
+        const customTxt = document.getElementById("custom-text");
+
+        customBtn.addEventListener("click", function() {
+            realFileBtn.click();
+        });
+
+        realFileBtn.addEventListener("change", function() {
+        if (realFileBtn.value) {
+            customTxt.innerHTML = realFileBtn.value;
+        } else {
+            customTxt.innerHTML = "No file chosen, yet.";
+        }
+        });
+    </script>
+   
 {% endblock %}

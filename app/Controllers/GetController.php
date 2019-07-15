@@ -104,8 +104,10 @@ class GetController extends Controller
     public function employeePools(Request $request, Response $response){
       $user = $this->container->user;
       $pools = new QuestionPoolCollection($this->container, $user->getOwnerId());
+      $SESSION="";
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+        $SESSION=$_SESSION['promotion_id'];
       }
       $this->render(
           $response,
@@ -114,7 +116,7 @@ class GetController extends Controller
             'pools' => $pools->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION['promotion_id']
+            'session' =>$SESSION
           ]
       );
     }
@@ -137,8 +139,10 @@ class GetController extends Controller
       if($pool->isActive()){
         return $this->redirect($response, 'home');
       }
+      $SESSION="";
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+        $SESSION=$_SESSION['promotion_id'];
       }
       $questions = $pool->upvoted();
 
@@ -149,7 +153,7 @@ class GetController extends Controller
             'pool' => $pool->toArray(),
             'questions' => $questions->toArray(),
             'answers' => $questions->getAnswers()->indexize(),
-            'session' =>$_SESSION['promotion_id']
+            'session' =>$SESSION
           ]
       );
     }
@@ -202,9 +206,14 @@ class GetController extends Controller
      */
     public function companyManagerHome(Request $request, Response $response)
     {
+        $SESSION="";
+        if(isset($_GET['promotion_id'])){
+          $_SESSION['promotion_id']=$_GET['promotion_id'];
+          $SESSION=$_SESSION['promotion_id'];
+        }
         $user = $this->container->user;
         $license = new License($this->container, ['user_email' => $user->email]);
-        $pool = new QuestionPool($this->container, ['owner_id' => $user->id],null,true,$_SESSION["promotion_id"]);
+        $pool = new QuestionPool($this->container, ['owner_id' => $user->id],null,true,$SESSION);
         $promotions=new PromotionCollection($this->container,['owner_id' => $user->id]);
 
         switch ($license->getStatus()) {
@@ -220,9 +229,6 @@ class GetController extends Controller
 
         $questions = $pool->upvoted();
         
-        if(isset($_GET['promotion_id'])){
-          $_SESSION['promotion_id']=$_GET['promotion_id'];
-        }
         return $this->render(
             $response,
             'company_manager/home.twig',
@@ -236,7 +242,7 @@ class GetController extends Controller
                 'promotions' =>$promotions->toArray(),
                 'post' =>$_POST,
                 'get' =>$_GET,
-                'session' =>$_SESSION['promotion_id']
+                'session' =>$SESSION
             ]
         );
     }
@@ -286,6 +292,7 @@ class GetController extends Controller
         return $this->render($response, 'company_manager/employees.twig', [
             'route' => 'employees',
             'employees' => $employees->toArray(),
+            'files' =>$_FILES,
             'post' =>$_POST,
             'get' =>$_GET,
             'session' =>$_SESSION['promotion_id']

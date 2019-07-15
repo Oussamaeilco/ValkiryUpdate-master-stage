@@ -60,6 +60,7 @@ class PermissionMiddleware
             'employees',
             'companyManagerActivate',
             'companyManagerAddEmployee',
+            'companyManagerAddEmployees',
             'companyManagerRemoveEmployee',
             'answerQuestion',
             'account',

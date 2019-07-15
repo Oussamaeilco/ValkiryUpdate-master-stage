@@ -78,6 +78,7 @@ $app->get('/employees', GetController::class . ':employees')->setName('employees
 //  company_manager:post
 $app->post('/activate', CompanyManagerPostController::class . ':activate')->setName('companyManagerActivate');
 $app->post('/addEmployee', CompanyManagerPostController::class . ':addEmployee')->setName('companyManagerAddEmployee');
+$app->post('/addEmployees', CompanyManagerPostController::class . ':addEmployees')->setName('companyManagerAddEmployees');
 $app->post('/removeEmployee', CompanyManagerPostController::class . ':removeEmployee')->setName('companyManagerRemoveEmployee');
 $app->post('/answerQuestion', CompanyManagerPostController::class . ':answerQuestion')->setName('answerQuestion');
 $app->post('/modifyAnswer', CompanyManagerPostController::class . ':modifyAnswer')->setName('modifyAnswer');
