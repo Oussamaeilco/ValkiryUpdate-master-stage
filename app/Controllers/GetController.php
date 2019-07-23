@@ -285,6 +285,11 @@ class GetController extends Controller
      */
     public function employees(Request $request, Response $response)
     {
+      $SESSION="";
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+        $SESSION=$_SESSION['promotion_id'];
+      }
         $user = $this->container->user;
         //$employees = new EmployeeCollection($this->container, $user->id);
         $employees = new EmployeeCollection($this->container, ['owner_id'=>$user->id,'promotion_id' => $_SESSION['promotion_id']]);
@@ -295,7 +300,7 @@ class GetController extends Controller
             'files' =>$_FILES,
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION['promotion_id']
+            'session' =>$SESSION
         ]);
     }
 
@@ -306,6 +311,11 @@ class GetController extends Controller
      */
     public function employeeHome(Request $request, Response $response)
     {
+      $SESSION="";
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+        $SESSION=$_SESSION['promotion_id'];
+      }
         $user = $this->container->user;
         $owner = $user->getOwnerId();
 
@@ -335,7 +345,7 @@ class GetController extends Controller
                 'canAsk' => (!$pool->hasAsked($user->id) && $pool->isOpen()),
                 'post' =>$_POST,
                 'get' =>$_GET,
-                'session' =>$_SESSION['promotion_id']
+                'session' =>$SESSION
             ],
             'answers' => $answers->indexize()
         ]);
