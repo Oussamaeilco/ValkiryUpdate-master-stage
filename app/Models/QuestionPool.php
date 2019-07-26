@@ -66,7 +66,7 @@ class QuestionPool extends Model
                 $this->fetchCreate($array, $autofill);
         }
 
-        if (!is_null($this->id) && $promotion_id!=null) {
+        if (!is_null($this->id) && !is_null($promotion_id)) {
             $this->collection = new QuestionCollection($container, ['pool_id' => $this->id, 'promotion_id' => $promotion_id]);
         }
         else if(!is_null($this->id)){
@@ -165,7 +165,7 @@ class QuestionPool extends Model
             $conditions['pool_id'] = $this->id;
         }
 
-        return new QuestionCollection($this->container, $conditions);
+        return new QuestionCollection($this->container, $conditions,null,true);
     }
     /*
     public function getExpiration($timeout = 8)

@@ -86,8 +86,12 @@ class GetController extends Controller
     public function companyManagerPools(Request $request, Response $response){
       $user = $this->container->user;
       $pools = new QuestionPoolCollection($this->container, $user->id);
+      $SESSION=[];
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
+        $SESSION=$_SESSION['promotion_id'];
       }
       $this->render(
           $response,
@@ -96,7 +100,7 @@ class GetController extends Controller
             'pools' => $pools->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,
-            'session' =>$_SESSION['promotion_id']
+            'session' =>$SESSION
           ]
       );
     }
@@ -104,9 +108,11 @@ class GetController extends Controller
     public function employeePools(Request $request, Response $response){
       $user = $this->container->user;
       $pools = new QuestionPoolCollection($this->container, $user->getOwnerId());
-      $SESSION="";
+      $SESSION=[];
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
         $SESSION=$_SESSION['promotion_id'];
       }
       $this->render(
@@ -139,9 +145,11 @@ class GetController extends Controller
       if($pool->isActive()){
         return $this->redirect($response, 'home');
       }
-      $SESSION="";
+      $SESSION=[];
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
         $SESSION=$_SESSION['promotion_id'];
       }
       $questions = $pool->upvoted();
@@ -206,14 +214,22 @@ class GetController extends Controller
      */
     public function companyManagerHome(Request $request, Response $response)
     {
-        $SESSION="";
-        if(isset($_GET['promotion_id'])){
-          $_SESSION['promotion_id']=$_GET['promotion_id'];
-          $SESSION=$_SESSION['promotion_id'];
-        }
-        $user = $this->container->user;
-        $license = new License($this->container, ['user_email' => $user->email]);
+      
+      $user = $this->container->user;
+      $SESSION=[];
+      if(isset($_GET['promotion_id'])){
+        $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
+        $SESSION=$_SESSION['promotion_id'];
         $pool = new QuestionPool($this->container, ['owner_id' => $user->id],null,true,$SESSION);
+      }
+      else{
+        $pool = new QuestionPool($this->container, ['owner_id' => $user->id]);
+      }
+        $license = new License($this->container, ['user_email' => $user->email]);
+        
+        
         $promotions=new PromotionCollection($this->container,['owner_id' => $user->id]);
 
         switch ($license->getStatus()) {
@@ -285,9 +301,11 @@ class GetController extends Controller
      */
     public function employees(Request $request, Response $response)
     {
-      $SESSION="";
+      $SESSION=[];
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
         $SESSION=$_SESSION['promotion_id'];
       }
         $user = $this->container->user;
@@ -311,24 +329,67 @@ class GetController extends Controller
      */
     public function employeeHome(Request $request, Response $response)
     {
-      $SESSION="";
+      $SESSION=[];
       if(isset($_GET['promotion_id'])){
         $_SESSION['promotion_id']=$_GET['promotion_id'];
+      }
+      if(isset($_SESSION['promotion_id'])){
         $SESSION=$_SESSION['promotion_id'];
       }
         $user = $this->container->user;
         $owner = $user->getOwnerId();
-
+        $promotion= $user->getPromotionId();
         if (is_null($owner)) {
             return $this->render($response, 'employee/no_owner.twig');
         }
-
+        if(is_null($promotion)){
+           return $this->render($response, 'employee/no_promotion.twig');
+        }
         $pool = new QuestionPool($this->container, ['owner_id' => $owner]);
-
-        $questions['user'] = $pool->getQuestions(['employee_id' => $user->id]);
-        $questions['voted'] = $pool->getVoted($user->id);
+        $questions['user'] = $pool->getQuestions(['employee_id' => $user->getID()]);
+        $questions['voted'] = $pool->getVoted($user->getID());
         $questions['upvoted'] = $pool->upvoted(3)->restrict();
         $questions['random'] = $pool->random(7)->except($questions['user'])->except($questions['upvoted'])->restrict();
+        
+        /*----------Chargement de la question utilisateur-----------*/
+          $your_question=[];
+          foreach( $questions['user']->toArray() as $question){
+            if($question['employee_id']==$user->getID()){
+              $your_question[]=$question;
+              break;
+            }
+          }
+        /*----------------------*/
+
+        /*-----------Tri des questions Votés-----------*/
+          /*$voted=[];
+          
+          for(  $i=0; $i<count($questions['upvoted']->toArray()) ; $i++ ){
+            
+            $voted[$i]=$questions['upvoted']->toArray()[$i];
+            
+            for( $j=$i+1; $j<count($questions['upvoted']->toArray()); $j++ ){
+              
+              $p=$questions['upvoted']->toArray()[$j];
+              
+              if($voted[$i]['votes'] < $p['votes']){
+                  
+                $voted[$i]=$p;
+
+              }
+
+            }
+           
+          }*/
+          $voted=$questions['upvoted']->toArray();
+          usort($voted, function($a, $b) {
+            return $b['votes'] <=> $a['votes'];
+          });
+        /*----------------------*/
+        
+        foreach($questions['upvoted']->toArray() as $exemple){
+
+        }
 
         $all = new QuestionCollection($this->container);
         $all->merge($questions['user'])->merge($questions['upvoted'])->merge($questions['random'])->uniq();
@@ -338,9 +399,10 @@ class GetController extends Controller
         return $this->render($response, 'employee/home.twig', [
             'pool' => $pool->toArray(),
             'questions' => [
-                'user' => $questions['user']->toArray(),
+                'id' => $user->getID(),
+                'user' => $your_question,
                 'voted' => $questions['voted']->indexize(),
-                'upvoted' => $questions['upvoted']->toArray(),
+                'upvoted' => $voted,
                 'random' => $questions['random']->toArray(),
                 'canAsk' => (!$pool->hasAsked($user->id) && $pool->isOpen()),
                 'post' =>$_POST,

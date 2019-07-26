@@ -77,6 +77,14 @@ class Question extends Model
     }
 
     /**
+     * @return int
+     */
+    public function getEmployeeID()
+    {   
+        return $this->employee_id;
+    }
+
+    /**
      * @return Answer
      */
     public function getAnswer()

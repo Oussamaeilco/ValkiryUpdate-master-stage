@@ -20,30 +20,39 @@ class QuestionCollection extends Model
      * @param Container $container
      * @param array|string|int|null $selector
      */
-    public function __construct(Container $container, $selector = null)
+    public function __construct(Container $container, $selector = null,$fetch=false)
     {
         parent::__construct($container);
 
         $questions = [];
-
+        $user = $this->container->user;
+        $isEmp=$user->isEmployee();
         if(isset($_GET['promotion_id'])){
             $_SESSION['promotion_id']=$_GET['promotion_id'];
         }
-
-        if ($selector == 'all' || $selector == '*') {
-            $questions = $this->selectAll();
-        } elseif (is_string($selector) || is_numeric($selector)) {
-            $questions = $this->selectAll(['pool_id' => $selector]);
-        } elseif (is_array($selector) && isset($_SESSION['promotion_id'])) {
-            
-            $questions = $this->query("select questions.id,questions.employee_id,questions.subject,questions.question,questions.pool_id from questions,employees,users where employees.promotion_id=".$_SESSION['promotion_id']." and employees.email=users.email and questions.employee_id=users.id and questions.pool_id=" . intval($selector['pool_id']));
+        if(!$fetch){
+            if ($selector == 'all' || $selector == '*') {
+                $questions = $this->selectAll();
+            } elseif (is_string($selector) || is_numeric($selector)) {
+                $questions = $this->selectAll(['pool_id' => $selector]);
+            } elseif (is_array($selector) && isset($_SESSION['promotion_id']) && !$isEmp) {
+                
+                $questions = $this->query("select questions.id,questions.employee_id,questions.subject,questions.question,questions.pool_id from questions,employees,users where employees.promotion_id=".$_SESSION['promotion_id']." and employees.email=users.email and questions.employee_id=users.id and questions.pool_id=" . intval($selector['pool_id']));
+            }
+            else if(is_array($selector) && $isEmp){
+                $questions = $this->query("select questions.id,questions.employee_id,questions.subject,questions.question,questions.pool_id from questions,employees,users where employees.promotion_id=".$user->getPromotionId()." and employees.email=users.email and questions.employee_id=users.id and questions.pool_id=" . intval($selector['pool_id']));
+            }
+            else if(is_array($selector)){
+                $questions=$this->selectAll($selector);
+            }
         }
-        else if(is_array($selector)){
-            $question=$this->selectAll($selector);
+        else{
+            if(is_array($selector)){
+                $questions=$this->selectAll($selector);
+            }
         }
-
         foreach ($questions as $question) {
-            $this->questions[] = new Question($container, $question, false);
+            $this->questions[] = new Question($container, $question);
         }
     }
 

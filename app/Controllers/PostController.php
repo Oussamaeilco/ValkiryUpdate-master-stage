@@ -64,7 +64,7 @@ class PostController extends Controller
             ));
 
             if ($emailRegisteredValidation->failed()) {
-                self::flash('Impossible de créer le compte', 'error');
+                self::flash('Impossible de créer le compte sans autorisation', 'error');
                 return $this->redirect($response, 'register');
             }
         }

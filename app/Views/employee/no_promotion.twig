@@ -1,0 +1,26 @@
+{% extends '_layouts/main.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ base_url() }}/assets/css/bootstrap-extends-navbar.css">
+{% endblock %}
+
+{% block content %}
+
+    {% if flash.error %}
+        <div class="alert alert-danger fixed-top" role="alert">
+            {{ flash.error | raw }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <div class="container pt-3">
+        <div class="jumbotron text-center">
+            <h1>Votre compte n'est pas relié à une promotion</h1>
+            <h4 class="mt-4 text-muted">Contactez le responsable de au sein de votre école</h4>
+
+            <a href="{{ path_for('disconnect') }}" class="mt-5 btn btn-danger">Déconnexion</a>
+        </div>
+    </div>
+{% endblock %}

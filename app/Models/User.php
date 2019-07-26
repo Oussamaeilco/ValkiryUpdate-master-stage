@@ -48,6 +48,13 @@ class User extends Model
         }
     }
 
+    public function isEmployee(){
+        if($this->account_type==0){
+            return true;
+        }
+        return false;
+    }
+
     private function setAllNull()
     {
         $this->id = null;
@@ -92,6 +99,28 @@ class User extends Model
         $owner = $this->prepare($statement, ['email' => $this->email]);
         if ($owner) {
             return $owner[0]['owner_id'];
+        }
+
+        return null;
+    }
+
+    public function getID(){
+        return $this->id;
+    }
+    /**
+     * @return mixed|null
+     */
+    public function getPromotionId()
+    {
+        if ($this->account_type != 0) {
+            return null;
+        }
+
+        $statement = "SELECT * FROM employees WHERE email=:email";
+
+        $promotion = $this->prepare($statement, ['email' => $this->email]);
+        if ($promotion) {
+            return $promotion[0]['promotion_id'];
         }
 
         return null;
@@ -203,4 +232,6 @@ class User extends Model
         return false;
       }
     }
+
+    
 }
