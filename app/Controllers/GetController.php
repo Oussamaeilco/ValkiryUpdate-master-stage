@@ -93,10 +93,19 @@ class GetController extends Controller
       if(isset($_SESSION['promotion_id'])){
         $SESSION=$_SESSION['promotion_id'];
       }
+      /*-------------*/
+      
+      $intervales=[];
+      foreach($pools->toArray() as $pool){
+          $intervales[]=['period_start' => $pool['period_start'], 'reponse' => $pool['reponse'] ];
+      }
+
+
       $this->render(
           $response,
           'company_manager/pools.twig',
           [
+            'intervales' =>$intervales,
             'pools' => $pools->toArray(),
             'post' =>$_POST,
             'get' =>$_GET,

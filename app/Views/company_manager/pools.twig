@@ -24,7 +24,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="inputStartDate" class="h5">Début de la période Question</label>
-                                    <input type="date" class="form-control" id="inputStartDate" name="inputStartDate">
+                                    <input type="date"  class="form-control" id="inputStartDate" name="inputStartDate">
                                 </div>
 
                                 <div class="form-group">
@@ -96,7 +96,7 @@
                                 <input type="hidden" class="form-control" id="inputEditId" name="inputEditId" data-value="id" readonly>
                                 <div class="form-group">
                                     <label for="inputEditStartDate" class="h5">Début de la période Question</label>
-                                    <input type="date" class="form-control" id="inputEditStartDate" name="inputEditStartDate" data-value="startdate">
+                                    <input type="date"  class="form-control" id="inputEditStartDate" name="inputEditStartDate" data-value="startdate">
                                 </div>
 
                                 <div class="form-group">
@@ -149,6 +149,13 @@
          beginREdit.value=endEdit.value;
         }
     </script>
+    <script>
+        function copyFunction() {
+        var end = document.getElementById("inputEndDate");
+        var beginR=document.getElementById("inputStartDateR");
+        beginR.value = end.value;
+        }
+    </script> 
 
     <!-- Controle des modales -->
 
