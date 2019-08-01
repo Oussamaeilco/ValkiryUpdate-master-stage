@@ -12,6 +12,8 @@ use App\Models\Promotion;
 use App\Models\QuestionPool;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Models\QuestionPoolCollection;
+use Respect\Validation\Rules\Equals;
 
 class CompanyManagerPostController extends Controller
 {
@@ -185,6 +187,24 @@ class CompanyManagerPostController extends Controller
     {
         $user = $this->container->user;
         $owner_id=$user->id;
+        /*------------Liste des intervales-----------*/
+        $pools = new QuestionPoolCollection($this->container,$owner_id);
+        
+        $intervales=[];
+        $max=DateTime::createFromFormat('Y-m-d',date("Y-m-d"));
+        foreach($pools->toArray() as $pool){
+            $intervales[]=['period_start' => $pool['period_start'], 'reponse' => $pool['reponse'] ];
+            $diff=(date_diff(DateTime::createFromFormat('Y-m-d',$pool['reponse']),$max))->format('%R');
+            if($diff=="-"){
+                $max=DateTime::createFromFormat('Y-m-d',$pool['reponse']);
+            }
+        }
+
+        /*-------------------------------------------*/
+       
+        
+        
+        /* Verification des valeurs entrer */
         $period_start=DateTime::createFromFormat('Y-m-d',$request->getParam('inputStartDate'));
         $period_end=DateTime::createFromFormat('Y-m-d',$request->getParam('inputEndDate'));
         $reponse_date=DateTime::createFromFormat('Y-m-d',$request->getParam('inputEndDateR'));
@@ -198,6 +218,25 @@ class CompanyManagerPostController extends Controller
         if($bool2=="+"){
             $diff_start=false;
         }
+        /*---------------------------------*/
+        /* Test de supperposition des périodes */
+        $test_su=true;        
+        foreach($intervales as $int){
+            $diff1=(date_diff(DateTime::createFromFormat('Y-m-d',$int['period_start']),$period_start))->format('%R');
+            $diff2=(date_diff(DateTime::createFromFormat('Y-m-d',$int['reponse']),$reponse_date))->format('%R');
+            $diff3=(DateTime::createFromFormat('Y-m-d',$int['reponse'])==$reponse_date);
+            $diff4=(date_diff($max,$period_start))->format('%R');
+            $diff5=(DateTime::createFromFormat('Y-m-d',$int['period_start'])==$max);
+            if( $diff1=="-" || $diff2=="-" || $diff3 || $diff4=="-" || $diff5)
+            {
+                $test_su=false;
+                break;
+            }
+        }
+        /*-----------------Ajouter Aujourd'hui--------------------*/
+        $today=new DateTime('now');
+        $new_starting_today=date_diff($today,$period_start)->format('%R');
+        /*--------------------------------------------------------*/
         $array = [
             'owner_id' => $owner_id,
             'period_start' => $request->getParam('inputStartDate'),
@@ -205,19 +244,27 @@ class CompanyManagerPostController extends Controller
             'reponse' => $request->getParam('inputEndDateR')
         ];
         $pool=new QuestionPool($this->container,$array,"create_manual",false);
-       if(!$diff_start){  
-            if(!$diff_end){
-                if (!$pool->add()) {
-                    self::flash("Impossible d'ajouter cette période à la liste", 'error');
-                }
+        if($new_starting_today=='+'){
+            if($test_su){
+                    if(!$diff_start){  
+                        if(!$diff_end){
+                            if (!$pool->add()) {
+                                self::flash("Impossible d'ajouter cette période à la liste", 'error');
+                            }
+                        }
+                        else{
+                            self::flash("La période de fin de Réponse doit être supérieur à la période de fin Question", 'error');
+                        }
+                    }
+                    else{
+                        self::flash("La période de Début de Question doit être inférieur à la période de fin Question", 'error');
+                    }
+            }else{
+                    self::flash("La période ne doit pas se supperposer avec une autre periode", 'error'); 
             }
-            else{
-                self::flash("La période de fin de Réponse doit être supérieur à la période de fin Question", 'error');
-            }
-       }
-       else{
-        self::flash("La période de Début de Question doit être inférieur à la période de fin Question", 'error');
-       }
+        }else{
+            self::flash("Une nouvelle période ne peut pas commencer avant aujourd'hui", 'error'); 
+        }
         return $this->redirect($response, 'pools');
     }
 
@@ -245,6 +292,22 @@ class CompanyManagerPostController extends Controller
         $id = $request->getParam('inputEditId');
         $user = $this->container->user;
         $owner_id=$user->id;
+        /*------------Liste des intervales-----------*/
+        $pools = new QuestionPoolCollection($this->container,$owner_id);
+        
+        $intervales=[];
+        $max=DateTime::createFromFormat('Y-m-d',date("Y-m-d"));
+        foreach($pools->toArray() as $pool){
+            if($pool['id']!=$id){
+                $intervales[]=[ 'id' => $pool['id'] , 'period_start' => $pool['period_start'], 'reponse' => $pool['reponse'] ];
+                $diff=(date_diff(DateTime::createFromFormat('Y-m-d',$pool['reponse']),$max))->format('%R');
+                if($diff=="-"){
+                    $max=DateTime::createFromFormat('Y-m-d',$pool['reponse']);
+                }
+            }
+        }
+        
+        /*-------------------------------------------*/
         /* Verification des valeurs entrer */
         $period_start=DateTime::createFromFormat('Y-m-d',$request->getParam('inputEditStartDate'));
         $period_end=DateTime::createFromFormat('Y-m-d',$request->getParam('inputEditEndDate'));
@@ -260,6 +323,28 @@ class CompanyManagerPostController extends Controller
             $diff_start=false;
         }
         /* ------------------------------------- */
+        
+        /* Test de supperposition des périodes */
+        $test_su=true;
+       
+        foreach($intervales as $int){
+                $diff1=(date_diff(DateTime::createFromFormat('Y-m-d',$int['period_start']),$period_start))->format('%R');
+                $diff2=(date_diff(DateTime::createFromFormat('Y-m-d',$int['reponse']),$reponse_date))->format('%R');
+                $diff3=(DateTime::createFromFormat('Y-m-d',$int['reponse'])==$reponse_date);
+                $diff4=(date_diff($max,$period_start))->format('%R');
+                $diff5=(DateTime::createFromFormat('Y-m-d',$int['period_start'])->format('Y-m-d'))==($max->format('Y-m-d'));
+               
+                if( $diff1=="-" || $diff2=="-" || $diff3 || $diff4=="-"  )
+               {
+                    $test_su=false;
+                    break;
+                }
+            
+            
+            
+        }
+        /*-------------------------------------*/
+        
         $array = [
             'id' => $id,
             'period_start' => $request->getParam('inputEditStartDate'),
@@ -268,20 +353,24 @@ class CompanyManagerPostController extends Controller
             'reponse' =>$request->getParam('inputEditEndDateR')
         ];
         $pools=new QuestionPool($this->container,$array,'create_manual',null);
-       if(!$diff_start){
-           if(!$diff_end){
-                if ($pools->edit($array,['id' => $id])) {
-                    self::flash("Période correctement modifiée", 'success');
-                } else {
-                    self::flash("Impossible de modifier la période".$pools->getValues(), 'error');
+        if($test_su){
+            if(!$diff_start){
+            if(!$diff_end){
+                    if ($pools->edit($array,['id' => $id])) {
+                        self::flash("Période correctement modifiée", 'success');
+                    } else {
+                        self::flash("Impossible de modifier la période".$pools->getValues(), 'error');
+                    }
+            }
+            else{
+                    self::flash("La période de fin de Réponse doit être supérieur à la période de fin Question", 'error');
                 }
-           }
-           else{
-                   self::flash("La période de fin de Réponse doit être supérieur à la période de fin Question", 'error');
-               }
-        }
-        else{
-                self::flash("La période de Début de Question doit être inférieur à la période de fin Question", 'error');
+            }
+            else{
+                    self::flash("La période de Début de Question doit être inférieur à la période de fin Question", 'error');
+            }
+        }else{
+            self::flash("La période ne doit pas se supperposer avec une autre periode", 'error');
         }
         return $this->redirect($response, 'pools');
     }

@@ -13,6 +13,7 @@ use App\Models\Promotion;
 use App\Models\PromotionCollection;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 
 class GetController extends Controller
 {
@@ -105,6 +106,7 @@ class GetController extends Controller
           $response,
           'company_manager/pools.twig',
           [
+            'today' => date("Y-m-d"),
             'intervales' =>$intervales,
             'pools' => $pools->toArray(),
             'post' =>$_POST,
@@ -371,25 +373,7 @@ class GetController extends Controller
         /*----------------------*/
 
         /*-----------Tri des questions Votés-----------*/
-          /*$voted=[];
-          
-          for(  $i=0; $i<count($questions['upvoted']->toArray()) ; $i++ ){
-            
-            $voted[$i]=$questions['upvoted']->toArray()[$i];
-            
-            for( $j=$i+1; $j<count($questions['upvoted']->toArray()); $j++ ){
-              
-              $p=$questions['upvoted']->toArray()[$j];
-              
-              if($voted[$i]['votes'] < $p['votes']){
-                  
-                $voted[$i]=$p;
-
-              }
-
-            }
-           
-          }*/
+         
           $voted=$questions['upvoted']->toArray();
           usort($voted, function($a, $b) {
             return $b['votes'] <=> $a['votes'];
