@@ -181,6 +181,17 @@ class CompanyManagerPostController extends Controller
         return $this->redirect($response, 'home');
     }
 
+    public function sendEmail(Request $request, Response $response){
+        
+        $user = $this->container->user;
+        $sujet=$request->getParam('sujet_input');
+        $message=$request->getParam('question_input');
+        $email=$request->getParam('email');
+        
+        mail($email, $sujet, $message, "From: ".$user->getEmail());
+        
+        return $this->redirect($response, 'home');
+    }
     
     
     public function addPeriode(Request $request, Response $response)
@@ -292,7 +303,7 @@ class CompanyManagerPostController extends Controller
         $id = $request->getParam('inputEditId');
         $user = $this->container->user;
         $owner_id=$user->id;
-        /*------------Liste des intervales-----------*/
+        /*------------Liste des intervales et date maximum-----------*/
         $pools = new QuestionPoolCollection($this->container,$owner_id);
         
         $intervales=[];
@@ -339,9 +350,6 @@ class CompanyManagerPostController extends Controller
                     $test_su=false;
                     break;
                 }
-            
-            
-            
         }
         /*-------------------------------------*/
         

@@ -70,7 +70,8 @@ class PermissionMiddleware
             'addPromotion',
             'addPeriode',
             'removePeriode',
-            'editPeriode'
+            'editPeriode',
+            'sendEmail'
         ]
     ];
 

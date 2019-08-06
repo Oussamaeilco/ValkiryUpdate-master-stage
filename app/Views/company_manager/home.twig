@@ -82,16 +82,26 @@
             {% else %}
                 {% for question in questions %}
                     <div class="jumbotron">
-                        <p class="text-center">Sujet : {{ question.subject }}</p>
-                        <p>Question : {{ question.question }}</p>
+                        <p class="text-center" id="sujet{{question.id}}">Sujet : {{ question.subject }}</p>
+                        <p id="question{{question.id}}">Question : {{ question.question }}</p>
                         <hr>
                         <p class="font-weight-bold">Nombre de votes : {{ question.votes }}</p>
                         {% if answers[question.id] is empty %}
+                        <div class="modal-footer">
+                          
                           <button type="button" class="btn btn-primary float-sm-right{% if questions_period %} disabled{% endif %}" data-toggle="modal"
                                   data-target="#answeringModal" data-id="{{question.id}}">Répondre
                           </button>
+                          
+                          <button type="button" class="btn btn-primary float-sm-right{% if not questions_period %} disabled{% endif %}" data-toggle="modal" onclick="transferFunction({{question.id}})"
+                                  data-target="#transferingModal" data-id="{{question.id}}">Transférer
+                          </button>
+                        </div>
                         {% else %}
-                          <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+                        
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-primary float-sm-right" data-action="showAnswer" data-target="{{ question.id }}">Voir la réponse</button>
+                            </div>
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -149,7 +159,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Réponse -->
     <div class="modal fade" id="answeringModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -176,7 +186,32 @@
             </div>
         </div>
     </div>
+    <!-- Transfère -->
+    <div class="modal fade" id="transferingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Question</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body" id="question_body">                
+              </div>
+              
+              <div class="modal-footer">
+                    <input id="email" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 3}$" class="form-control" style="margin-right:10px;" name="email" placeholder="Exemple@exemple.com" onchange="prepareMail()" ">
+                    <input type="hidden" value="" id="sujet_input" name="sujet_input" />
+                    <input type="hidden" value="" id="question_input" name="question_input" />
+                    <a rel="noopener noreferrer" href="" id="mail" class="btn btn-secondary disabled" onclick="sendMail()">Envoyer</a>
+                
+              </div>
+          </div>
+      </div>
+    </div>
 
+    
     {% for answer in answers %}
         {{ answerMacro.answer_modal_cm(answer) }}
     {% endfor %}
@@ -185,6 +220,43 @@
 
 {% block js %}
   <script>
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+    function prepareMail(){
+        var email=$("#email").val();
+        var sujet=$("#sujet_input").val();
+        var question=$("#question_input").val();
+        var mail=$("#mail").attr('href','mailto:'+email+'?subject=Question Valkiry '+sujet+'&body='+question);
+        if(validateEmail(email)){
+            mail.removeClass('disabled');
+        }
+    }
+    
+    function sendMail(){
+        window.open($("#mail").attr('href'));
+    }
+
+    function transferFunction(index){
+        
+        var id_question='#question'+index;
+        var id_sujet='#sujet'+index;
+        //values
+        var question=$(id_question).text();
+        var sujet=$(id_sujet).text();
+        //question affiché
+        var body_modal=$("#question_body");
+        body_modal.text(question);
+        //question et sujet
+        var input_sujet=$('#sujet_input');
+        var input_question=$('#question_input');
+        //valeur des inputs
+        input_sujet.val(sujet);
+        input_question.val(question);
+        
+    }
+
     (function(){
       var modalBodyContent;
       $('#answeringModal').on('show.bs.modal', function (event) {
@@ -193,7 +265,7 @@
         var modal = $(this);
         modal.find('.modal-body input[name="inputQuestionId"]').attr("value", id);
       });
-
+      
       $('[data-action=showAnswer]').click(function() {
           var id = $(this).attr('data-target');
           var modal = $('.answerModal#' + id);

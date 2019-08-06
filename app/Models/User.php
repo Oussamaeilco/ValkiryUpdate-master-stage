@@ -64,6 +64,10 @@ class User extends Model
         $this->session = null;
     }
 
+    public function getEmail(){
+        return $this->email;
+    }
+
     /**
      * @param bool $remember
      * @return bool
