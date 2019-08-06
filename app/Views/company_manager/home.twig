@@ -201,10 +201,10 @@
               </div>
               
               <div class="modal-footer">
-                    <input id="email" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 3}$" class="form-control" style="margin-right:10px;" name="email" placeholder="Exemple@exemple.com" onchange="prepareMail()" ">
+                    <input id="email" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 3}$" class="form-control" style="margin-right:10px;" name="email" placeholder="Exemple@exemple.com" onchange="prepareMail()">
                     <input type="hidden" value="" id="sujet_input" name="sujet_input" />
                     <input type="hidden" value="" id="question_input" name="question_input" />
-                    <a rel="noopener noreferrer" href="" id="mail" class="btn btn-secondary disabled" onclick="sendMail()">Envoyer</a>
+                    <a rel="noopener noreferrer" href="" id="mail" class="btn btn-secondary disabled" onclick="sendMail()" >Envoyer</a>
                 
               </div>
           </div>
